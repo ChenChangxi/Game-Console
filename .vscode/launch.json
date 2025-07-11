@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug (STM32F407, OpenOCD)",
+      "type": "cortex-debug",
+      "request": "launch",
+      "servertype": "openocd",
+      "cwd": "${workspaceRoot}",
+      "executable": "${workspaceRoot}/build/game_console.elf",
+      "device": "STM32F407ZGT6",
+      "runToEntryPoint": "main",
+      "interface": "swd",
+      "svdFile": "${workspaceRoot}/SVD/STM32F407.svd",
+      "configFiles": [
+        "interface/stlink.cfg",
+        "target/stm32f4x.cfg"
+      ],
+      "preLaunchTask": "build"
+    }
+  ]
+}
