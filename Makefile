@@ -17,8 +17,21 @@ HEX     := $(BUILD)/$(PROJECT).hex
 BIN     := $(BUILD)/$(PROJECT).bin
 
 # 递归搜所有 .c / .s
-SRC_C   := $(shell find Core Drivers -name "*.c")
-SRC_S   := $(shell find Startup -name "*.s")
+SRC_C := \
+  $(wildcard Core/*.c) \
+  $(wildcard Drivers/STM32F4xx_HAL_Driver/Src/*.c) \
+  $(wildcard Drivers/CMSIS/Device/ST/STM32F4xx/Source/*.c) \
+  $(wildcard Drivers/SYSTEM/Src/*.c) \
+  $(wildcard Drivers/BSP/Src/*.c)
+
+# 时钟驱动只能有一个
+SRC_C := $(filter-out \
+  %stm32f4xx_hal_timebase_tim_template.c \
+  %stm32f4xx_hal_timebase_rtc_alarm_template.c \
+  %stm32f4xx_hal_timebase_rtc_wakeup_template.c \
+,$(SRC_C))
+
+SRC_S := $(wildcard Startup/*.s)
 
 OBJ_C   := $(addprefix $(BUILD)/,$(SRC_C:.c=.o))
 OBJ_S   := $(addprefix $(BUILD)/,$(SRC_S:.s=.o))
@@ -30,13 +43,16 @@ INCLUDES = \
   -IDrivers/CMSIS/Include \
   -IDrivers/CMSIS/Device/ST/STM32F4xx/Include \
   -IDrivers/STM32F4xx_HAL_Driver/Inc \
-  -IDrivers/SYSTEM \
-  -IDrivers/BSP \
+  -IDrivers/SYSTEM/INC \
+  -IDrivers/BSP/INC \
   -IHardware
 
+# 全局宏（根据芯片 / HAL 需要自行增删）
+DEFINES = -DSTM32F407xx -DUSE_HAL_DRIVER
+
 # 编译、汇编、链接选项
-CFLAGS  = $(CPU) $(OPT) -Wall -ffunction-sections -fdata-sections $(INCLUDES)
-ASFLAGS = $(CPU) -x assembler-with-cpp
+CFLAGS  = $(CPU) $(OPT) -Wall -ffunction-sections -fdata-sections $(INCLUDES) $(DEFINES)
+ASFLAGS = $(CPU) -x assembler-with-cpp $(DEFINES)
 LDFLAGS = -TLinker/STM32F407.ld -Wl,--gc-sections -Wl,-Map=$(BUILD)/$(PROJECT).map $(CPU)
 
 # ────────────────   目标  ────────────────

@@ -12,11 +12,8 @@
       "runToEntryPoint": "main",
       "interface": "swd",
       "svdFile": "${workspaceRoot}/SVD/STM32F407.svd",
-      "configFiles": [
-        "interface/stlink.cfg",
-        "target/stm32f4x.cfg"
-      ],
-      "preLaunchTask": "build"
+      "configFiles": ["interface/stlink.cfg", "target/stm32f4x.cfg"],
+      "preLaunchTask": "build",
     }
   ]
 }
