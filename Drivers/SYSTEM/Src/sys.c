@@ -26,7 +26,7 @@ uint8_t sys_stm32_clock_init(uint32_t plln, uint32_t pllm, uint32_t pllp, uint32
 
     /* 配置系统/总线时钟 */
     rcc_clk_init.ClockType = RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
-    rcc_clk_init.SYSCLKSource = RCC_SYSCLKSOURCE_HSE;
+    rcc_clk_init.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
     rcc_clk_init.AHBCLKDivider = RCC_SYSCLK_DIV1;
     rcc_clk_init.APB1CLKDivider = RCC_HCLK_DIV4;
     rcc_clk_init.APB2CLKDivider = RCC_HCLK_DIV2;

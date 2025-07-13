@@ -1,8 +1,7 @@
-#include "sys.h"
 #include "delay.h"
 #include "led.h"
 
-int main() {
+int main(void) {
 
     HAL_Init();
     sys_stm32_clock_init(336, 8, 2, 7);
