@@ -1,7 +1,7 @@
 # ────────────────  可按需修改的参数  ────────────────
 TOOLCHAIN ?= arm-none-eabi
 CPU       := -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard
-OPT       := -Og
+OPT       := -Og -g3 -fno-inline -fno-omit-frame-pointer
 # ---------------------------------------------------
 
 CC      := $(TOOLCHAIN)-gcc
