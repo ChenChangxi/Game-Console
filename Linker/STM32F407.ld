@@ -23,10 +23,11 @@ SECTIONS
     *(.text*) *(.rodata*) *(.glue_7) *(.glue_7t)
     KEEP(*(.init)) KEEP(*(.fini))
     *(.ARM.exidx*)                                /* 异常索引表并入 */
+    _etext = .;
   } > FLASH
 
   /* -------------------------- 2. 已初始化的全局变量 (.data) -------------------------- */
-  _sidata = LOADADDR(.data);                      /* Flash 中源地址 */
+  _sidata = _etext;                      /* Flash 中源地址 */
 
   .data : AT ( _sidata )
   {
@@ -35,8 +36,6 @@ SECTIONS
     . = ALIGN(4);
     _edata = .;                                  /* RAM 结束 */
   } > RAM
-
-  _etext = LOADADDR(.data);                      /* Flash只读区结束地址 */
 
   /* -------------------------- 3. 未初始化的全局变量 (.bss) -------------------------- */
   .bss (NOLOAD) :
