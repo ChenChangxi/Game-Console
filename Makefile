@@ -43,8 +43,8 @@ INCLUDES = \
   -IDrivers/CMSIS/Include \
   -IDrivers/CMSIS/Device/ST/STM32F4xx/Include \
   -IDrivers/STM32F4xx_HAL_Driver/Inc \
-  -IDrivers/SYSTEM/INC \
-  -IDrivers/BSP/INC \
+  -IDrivers/SYSTEM/Inc \
+  -IDrivers/BSP/Inc \
   -IHardware
 
 # 全局宏（根据芯片 / HAL 需要自行增删）
