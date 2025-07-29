@@ -1,8 +1,10 @@
 #include "usart.h"
 
 UART_HandleTypeDef uart_handler;
+#if USART_UX_EN_RX
 uint16_t           stat;
 uint8_t            buff[USART_UX_BUFF_SIZE];
+#endif
 uint8_t            data[USART_UX_DATA_SIZE];
 
 void usart_init(uint32_t baud) {
@@ -40,8 +42,10 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
         rtx_init.Alternate = USART_RX_GPIO_AF;
         HAL_GPIO_Init(USART_RX_GPIO_PORT, &rtx_init);
 
-        HAL_NVIC_SetPriority(USART_UX_IRQn, 3, 2);
+#if USART_UX_EN_RX
+        HAL_NVIC_SetPriority(USART_UX_IRQn, 3, 3);
         HAL_NVIC_EnableIRQ(USART_UX_IRQn);
+#endif
     }
 }
 
@@ -55,6 +59,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
     if (huart->Instance == USART_UX) {
 
-        
+        if (!(stat & 0x8000)) {
+
+            if (stat & 0x4000) {if (buff[0] == 0x0a) stat |= 0x8000;else stat = 0;}      /* 收到了\n */
+            else {
+
+                if (buff[0] == 0x0d) stat |= 0x4000;                                     /* 收到了\r */
+                else {data[stat++] = buff[0];if (stat >= USART_UX_DATA_SIZE) stat = 0;}
+            }
+        }
     }
 }
