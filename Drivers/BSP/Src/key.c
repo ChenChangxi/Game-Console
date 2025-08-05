@@ -1,5 +1,7 @@
 #include "key.h"
 
+uint8_t exti[USART_UX_EXTI_SIZE] = {0xE4, 0xBD, 0xA0, 0xE5, 0xA5, 0xBD, 0x53, 0x54, 0x4D, 0x33, 0x32, 0x0D, 0x0A};
+
 void key_init(void) {
 
     GPIO_InitTypeDef key_init;
@@ -60,11 +62,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
         case KEYU_EXTI_Pin : {
 
-            do {
-                HAL_UART_Transmit(&uart_handler, exti, USART_UX_EXTI_SIZE, 1000);
-                while (__HAL_UART_GET_FLAG(&uart_handler, UART_FLAG_TC) != SET);
-                LED0(1);LED1(1);BEEP(0);delay_ms(1000);
-            } while (KEYU);break;
+            do {LED0(1);LED1(1);BEEP(0);delay_ms(1000);usart_transmit(exti, USART_UX_EXTI_SIZE);} while (KEYU);break;
         }
     }
 }

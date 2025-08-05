@@ -6,21 +6,21 @@
 #include "sys.h"
 
 /* TX和RX的引脚 */
-#define USART_TX_GPIO_PORT           GPIOA
-#define USART_TX_GPIO_PIN            GPIO_PIN_9
-#define USART_TX_GPIO_AF             GPIO_AF7_USART1   /* IO引脚复用器 */
-#define USART_TX_GPIO_CLK_ENABLE()   do {__HAL_RCC_GPIOA_CLK_ENABLE();} while (0)
+#define USART_TX_GPIO_PORT           GPIOB
+#define USART_TX_GPIO_PIN            GPIO_PIN_10
+#define USART_TX_GPIO_AF             GPIO_AF7_USART3   /* IO引脚复用器 */
+#define USART_TX_GPIO_CLK_ENABLE()   do {__HAL_RCC_GPIOB_CLK_ENABLE();} while (0)
 
-#define USART_RX_GPIO_PORT           GPIOA
-#define USART_RX_GPIO_PIN            GPIO_PIN_10
-#define USART_RX_GPIO_AF             GPIO_AF7_USART1
-#define USART_RX_GPIO_CLK_ENABLE()   do {__HAL_RCC_GPIOA_CLK_ENABLE();} while (0)
+#define USART_RX_GPIO_PORT           GPIOB
+#define USART_RX_GPIO_PIN            GPIO_PIN_11
+#define USART_RX_GPIO_AF             GPIO_AF7_USART3
+#define USART_RX_GPIO_CLK_ENABLE()   do {__HAL_RCC_GPIOB_CLK_ENABLE();} while (0)
 
 /* USART */
-#define USART_UX                     USART1
-#define USART_UX_IRQn                USART1_IRQn
-#define USART_UX_IRQHandler          USART1_IRQHandler
-#define USART_UX_CLK_ENABLE()        do {__HAL_RCC_USART1_CLK_ENABLE();} while(0)
+#define USART_UX                     USART3
+#define USART_UX_IRQn                USART3_IRQn
+#define USART_UX_IRQHandler          USART3_IRQHandler
+#define USART_UX_CLK_ENABLE()        do {__HAL_RCC_USART3_CLK_ENABLE();} while(0)
 #define USART_UX_EN_RX               1                 /* 条件编译是否允许读中断 */
 #define USART_UX_BUFF_SIZE           1                 /* 缓冲区大小 */
 #define USART_UX_DATA_SIZE           200               /* 数据区大小 */
@@ -35,5 +35,8 @@ extern uint8_t            exti[USART_UX_EXTI_SIZE];    /* EXTI发送字符串 */
 
 /* USART初始化 */
 void usart_init(uint32_t baud);
+
+/* USART发送数据 */
+void usart_transmit(uint8_t *tran, uint16_t size);
 
 #endif

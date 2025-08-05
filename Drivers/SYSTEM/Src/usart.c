@@ -49,6 +49,12 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
     }
 }
 
+void usart_transmit(uint8_t *tran, uint16_t size) {
+
+    HAL_UART_Transmit(&uart_handler, tran, size, 1000);
+    while (__HAL_UART_GET_FLAG(&uart_handler, UART_FLAG_TC) != SET);
+}
+
 void USART_UX_IRQHandler(void) {
 
     HAL_UART_IRQHandler(&uart_handler);
