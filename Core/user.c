@@ -10,14 +10,21 @@ int main(void) {
     key_init();
     beep_init();
     usart_init(115200);
-    usart_transmit(ask, IWDG_FEED);
-    iwdg_init(IWDG_PRESCALER_8, 4000);
+    iwdg_init(IWDG_PRESCALER_8, 300);
+    wwdg_init(WWDG_PRESCALER_8, 0x7F, 0x5F);
+    usart_transmit(feed_iwdg, WDG_LEN);
+    usart_transmit(feed_wwdg, WDG_LEN);
+    
+    /* 复位方式 */
+    if (__HAL_RCC_GET_FLAG(RCC_FLAG_WWDGRST)) usart_transmit(wwdg_reset, WDG_LEN);
+    if (__HAL_RCC_GET_FLAG(RCC_FLAG_IWDGRST)) usart_transmit(iwdg_reset, WDG_LEN);
+    if (__HAL_RCC_GET_FLAG(RCC_FLAG_PORRST))  usart_transmit(stat_reset, WDG_LEN);
+    if (__HAL_RCC_GET_FLAG(RCC_FLAG_PINRST))  usart_transmit(exte_reset, WDG_LEN);
+    __HAL_RCC_CLEAR_RESET_FLAGS();                                           /* 清标志（会积累）*/
 
     while (1) {
 
-        LED0(0);LED1(1);BEEP(0);delay_ms(502);
-        LED0(1);LED1(0);BEEP(0);delay_ms(500);
-        iwdg_feed();usart_transmit(done, IWDG_FEED);
+        delay_ms(80);wwdg_feed();iwdg_feed();LED1_TOGGLE();                  /* GREEN */
         if (stat & 0x8000) {usart_transmit(data, stat & 0x3fff);stat = 0;}   /* 低14位为长度 */
     }
 }
