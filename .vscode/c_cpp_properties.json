@@ -4,7 +4,8 @@
             "name": "GCC",
             "compilerPath": "arm-none-eabi-gcc",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/Drivers/SYSTEM/Inc"
             ],
             "defines": [
                 "STM32F407xx",

@@ -4,7 +4,6 @@
 #define __WDG_H
 
 #include "sys.h"
-#include "led.h"
 
 /* 字符串长度 */
 #define WDG_LEN 14

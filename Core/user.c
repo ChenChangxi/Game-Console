@@ -1,5 +1,6 @@
 #include "key.h"
 #include "wdg.h"
+#include "timer.h"
 
 int main(void) {
 
@@ -12,6 +13,7 @@ int main(void) {
     usart_init(115200);
     iwdg_init(IWDG_PRESCALER_8, 300);
     wwdg_init(WWDG_PRESCALER_8, 0x7F, 0x5F);
+    base_time_init(5000 - 1, 8400 -1);                                        /* 延时500ms */
     usart_transmit(feed_iwdg, WDG_LEN);
     usart_transmit(feed_wwdg, WDG_LEN);
     
@@ -24,7 +26,7 @@ int main(void) {
 
     while (1) {
 
-        delay_ms(80);wwdg_feed();iwdg_feed();LED1_TOGGLE();                  /* GREEN */
+        delay_ms(80);wwdg_feed();iwdg_feed();
         if (stat & 0x8000) {usart_transmit(data, stat & 0x3fff);stat = 0;}   /* 低14位为长度 */
     }
 }

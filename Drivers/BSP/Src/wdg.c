@@ -46,4 +46,4 @@ void HAL_WWDG_MspInit(WWDG_HandleTypeDef *hwwdg) {
 
 void WWDG_IRQHandler(void) {HAL_WWDG_IRQHandler(&wwdg_handler);}
 
-void HAL_WWDG_EarlyWakeupCallback(WWDG_HandleTypeDef *hwwdg) {wwdg_feed();LED0_TOGGLE();}   /* RED */
+void HAL_WWDG_EarlyWakeupCallback(WWDG_HandleTypeDef *hwwdg) {wwdg_feed();}

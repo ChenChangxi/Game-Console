@@ -16,7 +16,6 @@ void led_init(void) {
     gpio_init.Pin = LED1_GPIO_PIN;
     HAL_GPIO_Init(LED1_GPIO_PORT, &gpio_init);
     
-    /* 初始输出高电平，LED熄灭 */
-    LED0(1);
-    LED1(1);
+    /* 初始LED0亮，LED1灭 */
+    LED0(0);LED1(1);
 }
