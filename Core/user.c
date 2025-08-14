@@ -5,7 +5,7 @@
 int main(void) {
 
     HAL_Init();
-    sys_stm32_clock_init(336, 8, 2, 7);
+    sys_stm32_clock_init(25, 480, 1, 2);
     delay_init(168);
     led_init();
     key_init();

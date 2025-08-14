@@ -1,12 +1,16 @@
-/* 系统初始化（时钟/中断/GPIO等）*/
+/* 系统初始化 */
 
 #ifndef __SYS_H
 #define __SYS_H
 
-#include "stm32f4xx.h"
-#include "stm32f4xx_hal.h"
+#include "stm32h7xx.h"
+#include "stm32h7xx_hal.h"
 
-/* 配置STM32F407时钟树 */
-uint8_t sys_stm32_clock_init(uint32_t plln, uint32_t pllm, uint32_t pllp, uint32_t pllq);
+/* 配置STM32H743时钟树 */
+void sys_stm32_clock_init(uint32_t pllm, uint32_t plln, uint32_t pllp, uint32_t pllq);
+
+/* 变量声明 */
+extern RCC_OscInitTypeDef osc_init;
+extern RCC_ClkInitTypeDef clk_init;
 
 #endif

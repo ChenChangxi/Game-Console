@@ -1,41 +1,47 @@
 #include "sys.h"
 
-uint8_t sys_stm32_clock_init(uint32_t plln, uint32_t pllm, uint32_t pllp, uint32_t pllq) {
+RCC_OscInitTypeDef osc_init;
+RCC_ClkInitTypeDef clk_init;
 
-    HAL_StatusTypeDef ret = HAL_OK;
-    RCC_OscInitTypeDef rcc_osc_init = {0};
-    RCC_ClkInitTypeDef rcc_clk_init = {0};
+void sys_stm32_clock_init(uint32_t pllm, uint32_t plln, uint32_t pllp, uint32_t pllq) {
 
-    __HAL_RCC_PWR_CLK_ENABLE();                                     /* 使能PWR时钟 */
-    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);  /* 设置调压器输出电压级别 */
+    MODIFY_REG(PWR->CR3, PWR_CR3_SCUEN, 0);                          /* 电源更新 */
+    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);   /* 调压等级 */
+    while ((PWR->D3CR & (PWR_D3CR_VOSRDY)) != PWR_D3CR_VOSRDY);      /* 电压稳定 */
 
-    /* 选择HSE为时钟源 */
-    rcc_osc_init.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-    rcc_osc_init.HSEState = RCC_HSE_ON;
+    osc_init.OscillatorType = RCC_OSCILLATORTYPE_HSE 
+                            | RCC_OSCILLATORTYPE_HSI48
+                            | RCC_OSCILLATORTYPE_LSE
+                            | RCC_OSCILLATORTYPE_LSI;
+    osc_init.HSEState   = RCC_HSE_ON;
+    osc_init.HSI48State = RCC_HSI48_ON;               /* 全速USB时钟源 */
+    osc_init.HSIState   = RCC_HSI_OFF;
+    osc_init.LSEState   = RCC_LSE_ON;                 /* RTC时钟源 */
+    osc_init.LSIState   = RCC_LSI_ON;                 /* IWDG时钟源 */
+    osc_init.CSIState   = RCC_CSI_OFF;
+    osc_init.PLL.PLLState  = RCC_PLL_ON;
+    osc_init.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+    osc_init.PLL.PLLM      = pllm;
+    osc_init.PLL.PLLN      = plln;
+    osc_init.PLL.PLLP      = pllp;
+    osc_init.PLL.PLLQ      = pllq;
+    osc_init.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;         /* 压控振荡器（n倍频后）*/
+    osc_init.PLL.PLLRGE    = RCC_PLL1VCIRANGE_0;      /* PLL输入频率 */
+    osc_init.PLL.PLLFRACN  = 0;                       /* 小数部分 */
+    HAL_RCC_OscConfig(&osc_init);
 
-    /* 配置锁相环 */
-    rcc_osc_init.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-    rcc_osc_init.PLL.PLLState = RCC_PLL_ON;
-    rcc_osc_init.PLL.PLLN = plln;
-    rcc_osc_init.PLL.PLLM = pllm;
-    rcc_osc_init.PLL.PLLP = pllp;
-    rcc_osc_init.PLL.PLLQ = pllq;
-
-    ret = HAL_RCC_OscConfig(&rcc_osc_init);
-    if (ret != HAL_OK) {return 1;}
-
-    /* 配置系统/总线时钟 */
-    rcc_clk_init.ClockType = RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
-    rcc_clk_init.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-    rcc_clk_init.AHBCLKDivider = RCC_SYSCLK_DIV1;
-    rcc_clk_init.APB1CLKDivider = RCC_HCLK_DIV4;
-    rcc_clk_init.APB2CLKDivider = RCC_HCLK_DIV2;
-
-    ret = HAL_RCC_ClockConfig(&rcc_clk_init, FLASH_LATENCY_5);
-    if (ret != HAL_OK) {return 1;}
-
-    /* 使能FLASH预取功能 */
-    if (HAL_GetREVID() == 0x1001) {__HAL_FLASH_PREFETCH_BUFFER_ENABLE();}
-
-    return 0;                    
+    clk_init.ClockType = RCC_CLOCKTYPE_SYSCLK
+                       | RCC_CLOCKTYPE_HCLK
+                       | RCC_CLOCKTYPE_PCLK1
+                       | RCC_CLOCKTYPE_PCLK2
+                       | RCC_CLOCKTYPE_D1PCLK1
+                       | RCC_CLOCKTYPE_D3PCLK1;
+    clk_init.SYSCLKSource   = RCC_SYSCLKSOURCE_PLLCLK;
+    clk_init.SYSCLKDivider  = RCC_SYSCLK_DIV1;
+    clk_init.AHBCLKDivider  = RCC_HCLK_DIV2;
+    clk_init.APB1CLKDivider = RCC_APB1_DIV2;
+    clk_init.APB2CLKDivider = RCC_APB2_DIV2;
+    clk_init.APB3CLKDivider = RCC_APB3_DIV2;
+    clk_init.APB4CLKDivider = RCC_APB4_DIV2;
+    HAL_RCC_ClockConfig(&clk_init, FLASH_LATENCY_4);  /* 由电压和AHB频率决定 */
 }

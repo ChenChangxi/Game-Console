@@ -3,14 +3,8 @@
         {
             "name": "GCC",
             "compilerPath": "arm-none-eabi-gcc",
-            "includePath": [
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/Drivers/SYSTEM/Inc"
-            ],
-            "defines": [
-                "STM32F407xx",
-                "USE_HAL_DRIVER"
-            ],
+            "includePath": ["${workspaceFolder}/**"],
+            "defines": ["STM32H743xx", "USE_HAL_DRIVER"],
             "cStandard": "c11"
         }
     ],
