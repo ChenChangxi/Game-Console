@@ -17,7 +17,7 @@ uint8_t stat_reset[WDG_LEN] =
 
 void iwdg_init(uint8_t div, uint16_t load) {
 
-    iwdg_handler.Instance       = IWDG;
+    iwdg_handler.Instance       = IWDG1;
     iwdg_handler.Init.Prescaler = div;
     iwdg_handler.Init.Reload    = load;
     HAL_IWDG_Init(&iwdg_handler);
@@ -27,7 +27,7 @@ void iwdg_feed(void) {HAL_IWDG_Refresh(&iwdg_handler);}
 
 void wwdg_init(uint8_t div, uint8_t cou, uint8_t win) {
 
-    wwdg_handler.Instance       = WWDG;
+    wwdg_handler.Instance       = WWDG1;
     wwdg_handler.Init.Prescaler = div;
     wwdg_handler.Init.Counter   = cou;
     wwdg_handler.Init.Window    = win;

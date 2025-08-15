@@ -1,10 +1,10 @@
 #include "key.h"
 
-uint8_t exti[USART_UX_EXTI_SIZE] = {0xE4, 0xBD, 0xA0, 0xE5, 0xA5, 0xBD, 0x53, 0x54, 0x4D, 0x33, 0x32, 0x0D, 0x0A};
+GPIO_InitTypeDef key_handler;
+uint8_t exti[USART_UX_EXTI_SIZE] = 
+    {0xE4, 0xBD, 0xA0, 0xE5, 0xA5, 0xBD, 0x53, 0x54, 0x4D, 0x33, 0x32, 0x0D, 0x0A};
 
 void key_init(void) {
-
-    GPIO_InitTypeDef key_init;
 
     KEY0_EXTI_CLK_ENABLE();
     KEY1_EXTI_CLK_ENABLE();
@@ -12,30 +12,30 @@ void key_init(void) {
     KEYU_EXTI_CLK_ENABLE();
 
     /* 配置了GPIO，SYSCLG，EXTI */
-    key_init.Pin   = KEY0_EXTI_Pin;
-    key_init.Mode  = GPIO_MODE_IT_FALLING;
-    key_init.Pull  = GPIO_PULLUP;
-    key_init.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(KEY0_EXTI_PORT, &key_init);
+    key_handler.Pin   = KEY0_EXTI_Pin;
+    key_handler.Mode  = GPIO_MODE_IT_FALLING;
+    key_handler.Pull  = GPIO_PULLUP;
+    key_handler.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(KEY0_EXTI_PORT, &key_handler);
 
     /* 配置NVIC */
     HAL_NVIC_SetPriority(KEY0_EXTI_IRQn, 0, 2);
     HAL_NVIC_EnableIRQ(KEY0_EXTI_IRQn);
 
-    key_init.Pin   = KEY1_EXTI_Pin;
-    HAL_GPIO_Init(KEY1_EXTI_PORT, &key_init);
+    key_handler.Pin   = KEY1_EXTI_Pin;
+    HAL_GPIO_Init(KEY1_EXTI_PORT, &key_handler);
     HAL_NVIC_SetPriority(KEY1_EXTI_IRQn, 1, 2);
     HAL_NVIC_EnableIRQ(KEY1_EXTI_IRQn);
 
-    key_init.Pin   = KEY2_EXTI_Pin;
-    HAL_GPIO_Init(KEY2_EXTI_PORT, &key_init);
+    key_handler.Pin   = KEY2_EXTI_Pin;
+    HAL_GPIO_Init(KEY2_EXTI_PORT, &key_handler);
     HAL_NVIC_SetPriority(KEY2_EXTI_IRQn, 2, 2);
     HAL_NVIC_EnableIRQ(KEY2_EXTI_IRQn);
 
-    key_init.Pin  = KEYU_EXTI_Pin;
-    key_init.Mode = GPIO_MODE_IT_RISING;
-    key_init.Pull = GPIO_PULLDOWN;
-    HAL_GPIO_Init(KEYU_EXTI_PORT, &key_init);
+    key_handler.Pin  = KEYU_EXTI_Pin;
+    key_handler.Mode = GPIO_MODE_IT_RISING;
+    key_handler.Pull = GPIO_PULLDOWN;
+    HAL_GPIO_Init(KEYU_EXTI_PORT, &key_handler);
     HAL_NVIC_SetPriority(KEYU_EXTI_IRQn, 3, 2);
     HAL_NVIC_EnableIRQ(KEYU_EXTI_IRQn);
 }
