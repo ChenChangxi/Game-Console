@@ -9,7 +9,6 @@ int main(void) {
     delay_init(480);
     led_init();
     key_init();
-    beep_init();
     usart_init(115200);
     iwdg_init(IWDG_PRESCALER_8, 120);
     wwdg_init(WWDG_PRESCALER_8, 0x7F, 0x5F);

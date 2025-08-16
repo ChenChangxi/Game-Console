@@ -26,6 +26,6 @@
 void led_init(void);
 
 /* 变量声明 */
-GPIO_InitTypeDef led_handler;
+extern GPIO_InitTypeDef led_handler;
 
 #endif

@@ -1,7 +1,8 @@
 #include "sys.h"
 
-RCC_OscInitTypeDef osc_init;
-RCC_ClkInitTypeDef clk_init;
+RCC_OscInitTypeDef       osc_init;
+RCC_ClkInitTypeDef       clk_init;
+RCC_PeriphCLKInitTypeDef per_init;
 
 void sys_stm32_clock_init(uint32_t pllm, uint32_t plln, uint32_t pllp, uint32_t pllq) {
 
@@ -44,4 +45,10 @@ void sys_stm32_clock_init(uint32_t pllm, uint32_t plln, uint32_t pllp, uint32_t 
     clk_init.APB3CLKDivider = RCC_APB3_DIV2;
     clk_init.APB4CLKDivider = RCC_APB4_DIV2;
     HAL_RCC_ClockConfig(&clk_init, FLASH_LATENCY_4);  /* 由电压和AHB频率决定 */
+
+    per_init.PeriphClockSelection      = RCC_PERIPHCLK_USART16
+                                       | RCC_PERIPHCLK_USART234578;                          
+    per_init.Usart16ClockSelection     = RCC_USART16CLKSOURCE_D2PCLK2;       /* 16挂载在APB2总线，共用一个选择器 */
+    per_init.Usart234578ClockSelection = RCC_USART234578CLKSOURCE_D2PCLK1;   /* 234578挂载在APB1总线 ，共用一个选择器 */
+    HAL_RCCEx_PeriphCLKConfig(&per_init);
 }

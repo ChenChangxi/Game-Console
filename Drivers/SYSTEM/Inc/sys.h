@@ -10,7 +10,8 @@
 void sys_stm32_clock_init(uint32_t pllm, uint32_t plln, uint32_t pllp, uint32_t pllq);
 
 /* 变量声明 */
-extern RCC_OscInitTypeDef osc_init;
-extern RCC_ClkInitTypeDef clk_init;
+extern RCC_OscInitTypeDef       osc_init;
+extern RCC_ClkInitTypeDef       clk_init;
+extern RCC_PeriphCLKInitTypeDef per_init;
 
 #endif
