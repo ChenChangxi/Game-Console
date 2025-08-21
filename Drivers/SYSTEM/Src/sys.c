@@ -51,4 +51,6 @@ void sys_stm32_clock_init(uint32_t pllm, uint32_t plln, uint32_t pllp, uint32_t 
     per_init.Usart16ClockSelection     = RCC_USART16CLKSOURCE_D2PCLK2;       /* 16挂载在APB2总线，共用一个选择器 */
     per_init.Usart234578ClockSelection = RCC_USART234578CLKSOURCE_D2PCLK1;   /* 234578挂载在APB1总线 ，共用一个选择器 */
     HAL_RCCEx_PeriphCLKConfig(&per_init);
+
+    __HAL_RCC_SYSCFG_CLK_ENABLE();                                           /* H743默认关闭 */
 }

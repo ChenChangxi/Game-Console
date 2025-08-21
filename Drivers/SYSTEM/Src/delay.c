@@ -6,7 +6,7 @@ uint16_t cou_ms = 200;
 void delay_init(uint16_t sysclk) {
 
     SysTick -> CTRL = 0;
-    HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK_DIV8);   /* 实际是D1域而不是AHB */
+    HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK_DIV8);   /* 实际是系统时钟而不是AHB */
     cyc_us = sysclk / 8;
 }
 

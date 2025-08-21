@@ -54,15 +54,15 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
     switch (GPIO_Pin) {
 
-        case KEY0_EXTI_Pin : {do {LED0(0);LED1(1);} while (!KEY0);break;}
+        case KEY0_EXTI_Pin : {do {LED0(0);LED1(1);delay_ms(500);} while (!KEY0);break;}
         
-        case KEY1_EXTI_Pin : {do {LED0(1);LED1(0);} while (!KEY1);break;}
+        case KEY1_EXTI_Pin : {do {LED0(1);LED1(0);delay_ms(500);} while (!KEY1);break;}
             
-        case KEY2_EXTI_Pin : {do {LED0(1);LED1(1);} while (!KEY2);break;}
+        case KEY2_EXTI_Pin : {do {LED0(1);LED1(0);delay_ms(500);} while (!KEY2);break;}
 
         case KEYU_EXTI_Pin : {
 
-            do {LED0(1);LED1(1);delay_ms(1000);usart_transmit(exti, USART_UX_EXTI_SIZE);} while (KEYU);break;
+            do {LED0(0);LED1(1);delay_ms(500);usart_transmit(exti, USART_UX_EXTI_SIZE);} while (KEYU);break;
         }
     }
 }

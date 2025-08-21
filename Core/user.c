@@ -10,8 +10,8 @@ int main(void) {
     led_init();
     key_init();
     usart_init(115200);
-    iwdg_init(IWDG_PRESCALER_8, 120);
-    wwdg_init(WWDG_PRESCALER_8, 0x7F, 0x5F);
+    // iwdg_init(IWDG_PRESCALER_8, 120);
+    // wwdg_init(WWDG_PRESCALER_8, 0x7F, 0x5F);
     base_time_init(10000 - 1, 12000 -1);                                     /* 延时500ms */
     usart_transmit(feed_iwdg, WDG_LEN);
     usart_transmit(feed_wwdg, WDG_LEN);
@@ -25,7 +25,7 @@ int main(void) {
 
     while (1) {
 
-        delay_ms(30);wwdg_feed();iwdg_feed();
+        // delay_ms(1);wwdg_feed();iwdg_feed();
         if (stat & 0x8000) {usart_transmit(data, stat & 0x3fff);stat = 0;}   /* 低14位为长度 */
     }
 }
