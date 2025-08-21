@@ -27,7 +27,7 @@ void sys_stm32_clock_init(uint32_t pllm, uint32_t plln, uint32_t pllp, uint32_t 
     osc_init.PLL.PLLP      = pllp;
     osc_init.PLL.PLLQ      = pllq;
     osc_init.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;         /* 压控振荡器（n倍频后）*/
-    osc_init.PLL.PLLRGE    = RCC_PLL1VCIRANGE_0;      /* PLL输入频率 */
+    osc_init.PLL.PLLRGE    = RCC_PLL1VCIRANGE_2;      /* PLL输入频率 */
     osc_init.PLL.PLLFRACN  = 0;                       /* 小数部分 */
     HAL_RCC_OscConfig(&osc_init);
 
