@@ -41,7 +41,7 @@ void wwdg_feed(void) {HAL_WWDG_Refresh(&wwdg_handler);}
 void HAL_WWDG_MspInit(WWDG_HandleTypeDef *hwwdg) {
 
     __HAL_RCC_WWDG_CLK_ENABLE();
-    HAL_NVIC_SetPriority(WWDG_IRQn, 3, 2);
+    HAL_NVIC_SetPriority(WWDG_IRQn, 1, 0);
     HAL_NVIC_EnableIRQ(WWDG_IRQn);
 }
 
