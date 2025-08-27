@@ -1,19 +1,26 @@
 #include "timer.h"
 
 uint16_t           ins;
+uint16_t           time_stat;
+uint16_t           time_coun;
+uint32_t           time_tota;
+uint8_t            time_data[KIC_TIME_DATA_SIZE];
 TIM_HandleTypeDef  led_time_handler;
 TIM_HandleTypeDef  wdg_time_handler;
 TIM_HandleTypeDef  bln_time_handler;
+TIM_HandleTypeDef  kic_time_handler;
 GPIO_InitTypeDef   bln_gpio_handler;
+GPIO_InitTypeDef   kic_gpio_handler;
 TIM_OC_InitTypeDef bln_pwm_handler;
+TIM_IC_InitTypeDef kic_cap_handler;
 
-void base_time_init(uint16_t led_div, uint16_t led_cou, 
+void deay_time_init(uint16_t led_div, uint16_t led_cou, 
                     uint16_t wdg_div, uint16_t wdg_cou) {
 
     led_time_handler.Instance         = LED_TIME;
     led_time_handler.Init.Prescaler   = led_div;
     led_time_handler.Init.Period      = led_cou;
-    led_time_handler.Init.CounterMode = TIM_COUNTERMODE_UP;
+    led_time_handler.Init.CounterMode = TIM_COUNTERMODE_UP;    /* 递增计数 */
     HAL_TIM_Base_Init(&led_time_handler);
     HAL_TIM_Base_Start_IT(&led_time_handler);
 
@@ -30,13 +37,13 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
     if (htim->Instance == LED_TIME) {
 
         LED_TIME_CLK_ENABLE();
-        HAL_NVIC_SetPriority(LED_TIME_IRQn, 2, 1);
+        HAL_NVIC_SetPriority(LED_TIME_IRQn, 1, 1);
         HAL_NVIC_EnableIRQ(LED_TIME_IRQn);
 
     } else if (htim->Instance == WDG_TIME) {
 
         WDG_TIME_CLK_ENABLE();
-        HAL_NVIC_SetPriority(WDG_TIME_IRQn, 1, 1);
+        HAL_NVIC_SetPriority(WDG_TIME_IRQn, 0, 1);
         HAL_NVIC_EnableIRQ(WDG_TIME_IRQn);
     }
 }
@@ -45,20 +52,14 @@ void LED_TIME_IRQHandler(void) {HAL_TIM_IRQHandler(&led_time_handler);}
 
 void WDG_TIME_IRQHandler(void) {HAL_TIM_IRQHandler(&wdg_time_handler);}
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-    
-    if (htim->Instance == LED_TIME) {LED0_TOGGLE();LED1_TOGGLE();}
-    else if (htim->Instance == WDG_TIME) {iwdg_feed();wwdg_feed();}
-}
-
 uint16_t get_pers(void) {return (uint16_t)(400 - abs(400 - (ins++ % 800)));}
 
-void gene_time_init(uint16_t div, uint16_t cou) {
+void comp_time_init(uint16_t div, uint16_t cou) {
 
     bln_time_handler.Instance         = BLN_TIME;
     bln_time_handler.Init.Prescaler   = div;
     bln_time_handler.Init.Period      = cou;
-    bln_time_handler.Init.CounterMode = TIM_COUNTERMODE_UP;    /* 递增计数 */
+    bln_time_handler.Init.CounterMode = TIM_COUNTERMODE_UP;
     HAL_TIM_PWM_Init(&bln_time_handler);
 
     bln_pwm_handler.OCMode     = TIM_OCMODE_PWM1;              /* PWM1输出模式 */
@@ -83,5 +84,94 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
         bln_gpio_handler.Pull      = GPIO_PULLDOWN;
         bln_gpio_handler.Speed     = GPIO_SPEED_FREQ_HIGH;
         HAL_GPIO_Init(BLN_TIME_PORT, &bln_gpio_handler);
+    }
+}
+
+uint8_t get_digs(uint32_t time_tota) {
+    
+    uint8_t size = 0;do {size++;time_tota /= 10;} while (time_tota > 0);return size;
+}
+
+void capt_time_init(uint16_t div, uint16_t cou) {
+
+    kic_time_handler.Instance         = KIC_TIME;
+    kic_time_handler.Init.Prescaler   = div;
+    kic_time_handler.Init.Period      = cou;
+    kic_time_handler.Init.CounterMode = TIM_COUNTERMODE_UP;
+    HAL_TIM_IC_Init(&kic_time_handler);
+
+    kic_cap_handler.ICFilter    = 0x0;                         /* 采样滤波 */
+    kic_cap_handler.ICPolarity  = TIM_ICPOLARITY_RISING;       /* 捕获边沿 */
+    kic_cap_handler.ICPrescaler = TIM_ICPSC_DIV1;              /* 分频系数（N个边沿一次捕获）*/
+    kic_cap_handler.ICSelection = TIM_ICSELECTION_INDIRECTTI;  /* 映射关系 */
+    HAL_TIM_IC_ConfigChannel(&kic_time_handler, &kic_cap_handler, KIC_TIME_CHANNEL);         
+
+    __HAL_TIM_ENABLE_IT(&kic_time_handler, TIM_IT_UPDATE);     /* 启动更新中断*/
+    HAL_TIM_IC_Start_IT(&kic_time_handler, KIC_TIME_CHANNEL);  /* 启动计数器和捕获中断且使能输入 */
+}
+
+void HAL_TIM_IC_MspInit(TIM_HandleTypeDef *htim) {
+
+    if (htim->Instance == KIC_TIME) {
+        
+        KIC_GPIO_CLK_ENABLE();
+        KIC_TIME_CLK_ENABLE();
+
+        kic_gpio_handler.Pin       = KIC_TIME_PIN;
+        kic_gpio_handler.Mode      = GPIO_MODE_AF_PP;
+        kic_gpio_handler.Alternate = KIC_TIME_AF;
+        kic_gpio_handler.Pull      = GPIO_PULLDOWN;
+        kic_gpio_handler.Speed     = GPIO_SPEED_FREQ_HIGH;
+        HAL_GPIO_Init(KIC_TIME_PORT, &kic_gpio_handler);
+        HAL_NVIC_EnableIRQ(KIC_TIME_IRQn);
+        HAL_NVIC_SetPriority(KIC_TIME_IRQn, 3, 2);
+    }
+}
+
+void KIC_TIME_IRQHandler(void) {HAL_TIM_IRQHandler(&kic_time_handler);}
+
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
+
+    if (htim->Instance == KIC_TIME) {
+
+        if (!(time_stat & 0x8000)) {
+
+            if (!(time_stat & 0x4000)) {                      /* 来了上升沿 */
+
+                time_stat |= 0x4000;
+                __HAL_TIM_DISABLE(&kic_time_handler);         /* 关闭定时器 */
+                __HAL_TIM_SET_COUNTER(&kic_time_handler, 0);  /* 计数器清零 */
+                TIM_RESET_CAPTUREPOLARITY(&kic_time_handler, KIC_TIME_CHANNEL);                         /* 清除上升沿触发 */
+                TIM_SET_CAPTUREPOLARITY(&kic_time_handler, KIC_TIME_CHANNEL, TIM_ICPOLARITY_FALLING);   /* 改为下降沿触发 */
+                __HAL_TIM_ENABLE(&kic_time_handler);          /* 打开定时器 */
+
+            } else {                                          /* 来了下降沿 */
+
+                time_stat |= 0x8000;
+                time_coun = HAL_TIM_ReadCapturedValue(&kic_time_handler, KIC_TIME_CHANNEL);             /* 读取计数器的值 */
+                TIM_RESET_CAPTUREPOLARITY(&kic_time_handler, KIC_TIME_CHANNEL);                         /* 清除下降沿触发 */
+                TIM_SET_CAPTUREPOLARITY(&kic_time_handler, KIC_TIME_CHANNEL, TIM_ICPOLARITY_RISING);    /* 改为上升沿触发 */
+            }
+        }
+    }
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+
+    if (htim->Instance == LED_TIME) {LED0_TOGGLE();LED1_TOGGLE();}
+    else if (htim->Instance == WDG_TIME) {iwdg_feed();wwdg_feed();}
+    else if (htim->Instance == KIC_TIME) {
+
+        if (!(time_stat & 0x8000) && (time_stat & 0x4000)) {  /* 未准备发送且来了上升沿 */
+
+            if ((time_stat & 0x3fff) != 0x3fff) time_stat++;  /* 周期数达到最大值 */
+            else {
+
+                time_stat |= 0x8000;
+                time_coun = 0xffff;
+                TIM_RESET_CAPTUREPOLARITY(&kic_time_handler, KIC_TIME_CHANNEL);                         /* 清除下降沿触发 */
+                TIM_SET_CAPTUREPOLARITY(&kic_time_handler, KIC_TIME_CHANNEL, TIM_ICPOLARITY_RISING);    /* 改为上升沿触发 */
+            }
+        }
     }
 }

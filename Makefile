@@ -54,7 +54,10 @@ DEFINES = -DSTM32H743xx -DUSE_HAL_DRIVER
 # 编译、汇编、链接选项
 CFLAGS  = $(CPU) $(OPT) -Wall -ffunction-sections -fdata-sections $(INCLUDES) $(DEFINES)
 ASFLAGS = $(CPU) -x assembler-with-cpp $(DEFINES)
-LDFLAGS = -TLinker/STM32H743.ld -Wl,--gc-sections -Wl,-Map=$(BUILD)/$(PROJECT).map $(CPU)
+LDFLAGS = $(CPU) \
+  -TLinker/STM32H743.ld \
+  --specs=nano.specs --specs=nosys.specs \
+  -Wl,--gc-sections -Wl,-Map=$(BUILD)/$(PROJECT).map
 
 # ────────────────   目标  ────────────────
 .PHONY: all clean size

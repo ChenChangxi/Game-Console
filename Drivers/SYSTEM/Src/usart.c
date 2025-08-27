@@ -2,8 +2,8 @@
 
 UART_HandleTypeDef uart_handler;
 #if USART_UX_EN_RX
-uint16_t           stat;
-uint8_t            buff[USART_UX_BUFF_SIZE];
+uint16_t           uart_stat;
+uint8_t            buff;
 #endif
 uint8_t            data[USART_UX_DATA_SIZE];
 
@@ -20,7 +20,7 @@ void usart_init(uint32_t baud) {
     uart_handler.Init.ClockPrescaler = UART_PRESCALER_DIV1;           /* USART核时钟分频系数 */
     uart_handler.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;   /* 一次采样 */
     HAL_UART_Init(&uart_handler);
-    HAL_UART_Receive_IT(&uart_handler, buff, USART_UX_BUFF_SIZE);
+    HAL_UART_Receive_IT(&uart_handler, &buff, USART_UX_BUFF_SIZE);
 }
 
 void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
@@ -60,20 +60,20 @@ void usart_transmit(uint8_t *tran, uint16_t size) {
 void USART_UX_IRQHandler(void) {
 
     HAL_UART_IRQHandler(&uart_handler);
-    HAL_UART_Receive_IT(&uart_handler, buff, USART_UX_BUFF_SIZE);   /* 防止被清中断 */
+    HAL_UART_Receive_IT(&uart_handler, &buff, USART_UX_BUFF_SIZE);   /* 防止被清中断 */
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
     if (huart->Instance == USART_UX) {
 
-        if (!(stat & 0x8000)) {
+        if (!(uart_stat & 0x8000)) {
 
-            if (stat & 0x4000) {if (buff[0] == 0x0a) stat |= 0x8000;else stat = 0;}      /* 收到了\n */
+            if (uart_stat & 0x4000) {if (buff == 0x0a) uart_stat |= 0x8000;else uart_stat = 0;}      /* 收到了\n */
             else {
 
-                if (buff[0] == 0x0d) stat |= 0x4000;                                     /* 收到了\r */
-                else {data[stat++] = buff[0];if (stat >= USART_UX_DATA_SIZE) stat = 0;}
+                if (buff == 0x0d) uart_stat |= 0x4000;                                               /* 收到了\r */
+                else {data[uart_stat++] = buff;if (uart_stat >= USART_UX_DATA_SIZE) uart_stat = 0;}  /* 到这里前两位为0 */
             }
         }
     }

@@ -57,6 +57,9 @@ SECTIONS
     _eheap = .;               /* 堆结束地址 */
   } > RAM_D1
 
+  PROVIDE(_end = _sheap);     /* 头文件符号 */
+  PROVIDE(end  = _sheap);
+
   /* -------------------------- 5. 用户栈空间 -------------------------- */
   ._user_stack (NOLOAD):
   {
