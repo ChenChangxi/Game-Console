@@ -5,7 +5,6 @@
 
 #include "led.h"
 #include "delay.h"
-#include "usart.h"
 
 /* 引脚和时钟 */
 #define KEY0_EXTI_PORT          GPIOH

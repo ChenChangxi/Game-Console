@@ -1,8 +1,8 @@
 #include "key.h"
 #include "timer.h"
+#include "usart.h"
 #include "stdio.h"
 #include "string.h"
-#include "stdint.h"
 
 int main(void) {
 
@@ -15,7 +15,8 @@ int main(void) {
     iwdg_init(IWDG_PRESCALER_8, 140);
     wwdg_init(WWDG_PRESCALER_8, 0x7F, 0x5F);
     deay_time_init(12000 - 1, 10000 - 1, 7200 - 1, 1000 - 1);     /* 500ms,30ms */
-    comp_time_init(120 - 1, 1000 - 1);                            /* 500us */
+    comp_time_init(1 - 1, 1000 - 1);                              /* 500us */
+    mast_time_init(1 - 1, 5 - 1);                                 /* 500ns */
     capt_time_init(240 - 1, 65535 - 1);                           /* 1us */
     usart_transmit(feed_iwdg, strlen(feed_iwdg));
     usart_transmit(feed_wwdg, strlen(feed_wwdg));
@@ -29,8 +30,6 @@ int main(void) {
 
     while (1) {
 
-        delay_ms(5);
-        __HAL_TIM_SET_COMPARE(&bln_time_handler, BLN_TIME_CHANNEL, get_pers());              /* 改变PWM占空比 */
         if (uart_stat & 0x8000) {usart_transmit(data, uart_stat & 0x3fff);uart_stat = 0;}    /* 低14位为长度 */
         if (time_stat & 0x8000) {
             
