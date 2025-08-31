@@ -54,34 +54,24 @@
 uint16_t get_pers(uint16_t per);
 
 /* 获取整数位数 */
-uint8_t get_digs(uint32_t time_tota);
+uint16_t get_digs(uint32_t time_tota);
 
 /* 定时器初始化 */
 void deay_time_init(uint16_t led_div, uint16_t led_cou, 
                     uint16_t wdg_div, uint16_t wdg_cou);
+void mast_time_init(uint16_t div, uint16_t cou);
 void comp_time_init(uint16_t div, uint16_t cou);
 void capt_time_init(uint16_t div, uint16_t cou);
-void mast_time_init(uint16_t div, uint16_t cou);
 
 /* 变量声明 */
-extern uint16_t                ins;
-extern uint16_t                cnt;
-extern uint16_t                time_stat;       /* 0为发送状态，1为边沿状态，2~15为计数周期数 */
-extern uint16_t                time_coun;       /* 计数器计数值 */
-extern uint32_t                time_tota;       /* 总时间（us）*/
-extern uint8_t                 time_data[KIC_TIME_DATA_SIZE];      /* 发送串口的字节流 */
-extern TIM_HandleTypeDef       led_time_handler;
-extern TIM_HandleTypeDef       wdg_time_handler;
-extern TIM_HandleTypeDef       bln_time_handler;
-extern TIM_HandleTypeDef       kic_time_handler;
-extern TIM_HandleTypeDef       mst_time_handler;
-extern GPIO_InitTypeDef        bln_gpio_handler;
-extern GPIO_InitTypeDef        kic_gpio_handler;
-extern GPIO_InitTypeDef        mst_gpio_handler;
-extern TIM_OC_InitTypeDef      bln_pwm_handler;
-extern TIM_IC_InitTypeDef      kic_cap_handler;
-extern TIM_SlaveConfigTypeDef  bln_clk_handler;
-extern TIM_ClockConfigTypeDef  mst_clk_handler;
-extern TIM_MasterConfigTypeDef mst_cfg_handler;
+extern uint16_t ins;
+extern uint16_t cnt;
+extern uint16_t time_stat;       /* 0为发送状态，1为边沿状态，2~15为计数周期数 */
+extern uint16_t time_coun;       /* 计数器计数值 */
+extern TIM_HandleTypeDef led_time_handler;
+extern TIM_HandleTypeDef wdg_time_handler;
+extern TIM_HandleTypeDef bln_time_handler;
+extern TIM_HandleTypeDef kic_time_handler;
+extern TIM_HandleTypeDef mst_time_handler;
 
 #endif

@@ -35,17 +35,3 @@ void KEY0_EXTI_IRQHandler(void) {HAL_GPIO_EXTI_IRQHandler(KEY0_EXTI_Pin);}
 void KEY1_EXTI_IRQHandler(void) {HAL_GPIO_EXTI_IRQHandler(KEY1_EXTI_Pin);}
 
 void KEY2_EXTI_IRQHandler(void) {HAL_GPIO_EXTI_IRQHandler(KEY2_EXTI_Pin);}
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-
-    delay_ms(20);      /* 消抖 */
-
-    switch (GPIO_Pin) {
-
-        case KEY0_EXTI_Pin : {do {LED0(0);LED1(1);delay_ms(500);} while (!KEY0);break;}
-        
-        case KEY1_EXTI_Pin : {do {LED0(1);LED1(0);delay_ms(500);} while (!KEY1);break;}
-            
-        case KEY2_EXTI_Pin : {do {LED0(1);LED1(0);delay_ms(500);} while (!KEY2);break;}
-    }
-}

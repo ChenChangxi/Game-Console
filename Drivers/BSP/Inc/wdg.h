@@ -5,6 +5,15 @@
 
 #include "sys.h"
 
+/* 独立看门狗 */
+#define IWDG                IWDG1
+
+/* 窗口看门狗 */
+#define WWDG                WWDG1
+#define WWDG_IRQn           WWDG_IRQn
+#define WWDG_IRQHandler     WWDG_IRQHandler
+#define WWDG_CLK_ENABLE()   do {__HAL_RCC_WWDG_CLK_ENABLE();} while (0)
+
 /* 初始化独立看门狗 */
 void iwdg_init(uint8_t div, uint16_t load);
 
