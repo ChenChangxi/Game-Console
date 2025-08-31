@@ -25,6 +25,8 @@
 #define BLN_TIME_PORT            GPIOB
 #define BLN_TIME_PIN             GPIO_PIN_3
 #define BLN_TIME_AF              GPIO_AF1_TIM2
+#define BLN_TIME_IRQn            TIM2_IRQn
+#define BLN_TIME_IRQHandler      TIM2_IRQHandler
 #define BLN_GPIO_CLK_ENABLE()    do {__HAL_RCC_GPIOB_CLK_ENABLE();} while (0)
 #define BLN_TIME_CLK_ENABLE()    do {__HAL_RCC_TIM2_CLK_ENABLE();}  while (0)
 
@@ -45,8 +47,6 @@
 #define MST_TIME_PORT            GPIOD
 #define MST_TIME_PIN             GPIO_PIN_2
 #define MST_TIME_AF              GPIO_AF2_TIM3
-#define MST_TIME_IRQn            TIM3_IRQn
-#define MST_TIME_IRQHandler      TIM3_IRQHandler
 #define MST_GPIO_CLK_ENABLE()    do {__HAL_RCC_GPIOD_CLK_ENABLE();} while (0)
 #define MST_TIME_CLK_ENABLE()    do {__HAL_RCC_TIM3_CLK_ENABLE();}  while (0)
 

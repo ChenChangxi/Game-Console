@@ -61,6 +61,7 @@ void comp_time_init(uint16_t div, uint16_t cou) {
     bln_clk_handler.SlaveMode        = TIM_SLAVEMODE_EXTERNAL1;         /* 外部时钟模式1 */
     HAL_TIM_SlaveConfigSynchro(&bln_time_handler, &bln_clk_handler);
 
+    __HAL_TIM_ENABLE_IT(&bln_time_handler, TIM_IT_UPDATE);              /* 启动更新中断*/
     __HAL_TIM_ENABLE_OCxPRELOAD(&bln_time_handler, BLN_TIME_CHANNEL);   /* 使能通道预装载 */
     HAL_TIM_PWM_Start(&bln_time_handler, BLN_TIME_CHANNEL);             /* 启动计数器且使能输出 */ 
 }
@@ -78,8 +79,12 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
         bln_gpio_handler.Pull      = GPIO_PULLDOWN;
         bln_gpio_handler.Speed     = GPIO_SPEED_FREQ_HIGH;
         HAL_GPIO_Init(BLN_TIME_PORT, &bln_gpio_handler);
+        HAL_NVIC_EnableIRQ(BLN_TIME_IRQn);
+        HAL_NVIC_SetPriority(BLN_TIME_IRQn, 3, 1);
     }
 }
+
+void BLN_TIME_IRQHandler(void) {HAL_TIM_IRQHandler(&bln_time_handler);}
 
 uint8_t get_digs(uint32_t time_tota) {
     
@@ -168,7 +173,7 @@ void mast_time_init(uint16_t div, uint16_t cou) {
     mst_cfg_handler.MasterSlaveMode      = TIM_MASTERSLAVEMODE_DISABLE;  /* 只作主不作从 */
     HAL_TIMEx_MasterConfigSynchronization(&mst_time_handler, &mst_cfg_handler);
 
-    HAL_TIM_Base_Start_IT(&mst_time_handler);
+    HAL_TIM_Base_Start(&mst_time_handler);
 }
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
@@ -196,12 +201,8 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
         mst_gpio_handler.Pull      = GPIO_PULLDOWN;
         mst_gpio_handler.Speed     = GPIO_SPEED_FREQ_HIGH;
         HAL_GPIO_Init(MST_TIME_PORT, &mst_gpio_handler);
-        HAL_NVIC_EnableIRQ(MST_TIME_IRQn);
-        HAL_NVIC_SetPriority(MST_TIME_IRQn, 3, 1);
     }
 }
-
-void MST_TIME_IRQHandler(void) {HAL_TIM_IRQHandler(&mst_time_handler);}
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
@@ -220,8 +221,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
                 TIM_SET_CAPTUREPOLARITY(&kic_time_handler, KIC_TIME_CHANNEL, TIM_ICPOLARITY_RISING);    /* 改为上升沿触发 */
             }
         }
-    } else if (htim->Instance == MST_TIME) {
+    } else if (htim->Instance == BLN_TIME) {
 
-        if (++cnt == 10000) {__HAL_TIM_SET_COMPARE(&bln_time_handler, BLN_TIME_CHANNEL, get_pers(400));cnt = 0;}
+        if (++cnt == 10) {__HAL_TIM_SET_COMPARE(&bln_time_handler, BLN_TIME_CHANNEL, get_pers(400));cnt = 0;}
     }
 }
