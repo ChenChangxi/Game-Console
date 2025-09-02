@@ -38,6 +38,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
     if (htim->Instance == LED_TIME) {LED0_TOGGLE();LED1_TOGGLE();}
     else if (htim->Instance == WDG_TIME) {iwdg_feed();wwdg_feed();}
+    else if (htim->Instance == BLN_TIME) {__HAL_TIM_SET_COMPARE(&bln_time_handler, BLN_TIME_CHANNEL, get_pers(400));}
     else if (htim->Instance == KIC_TIME) {
 
         if (!(time_stat & 0x8000) && (time_stat & 0x4000)) {  /* 未准备发送且来了上升沿 */
@@ -51,9 +52,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
                 TIM_SET_CAPTUREPOLARITY(&kic_time_handler, KIC_TIME_CHANNEL, TIM_ICPOLARITY_RISING);    /* 改为上升沿触发 */
             }
         }
-    } else if (htim->Instance == BLN_TIME) {
-
-        if (++cnt == 10) {__HAL_TIM_SET_COMPARE(&bln_time_handler, BLN_TIME_CHANNEL, get_pers(400));cnt = 0;}
     }
 }
 

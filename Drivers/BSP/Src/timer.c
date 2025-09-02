@@ -1,7 +1,6 @@
 #include "timer.h"
 
 uint16_t ins;
-uint16_t cnt;
 uint16_t time_stat;
 uint16_t time_coun;
 TIM_HandleTypeDef led_time_handler;
@@ -16,7 +15,7 @@ void deay_time_init(uint16_t led_div, uint16_t led_cou,
     led_time_handler.Instance         = LED_TIME;
     led_time_handler.Init.Prescaler   = led_div;
     led_time_handler.Init.Period      = led_cou;
-    led_time_handler.Init.CounterMode = TIM_COUNTERMODE_UP;    /* 递增计数 */
+    led_time_handler.Init.CounterMode = TIM_COUNTERMODE_UP;
     HAL_TIM_Base_Init(&led_time_handler);
     HAL_TIM_Base_Start_IT(&led_time_handler);
 
@@ -57,10 +56,11 @@ void comp_time_init(uint16_t div, uint16_t cou) {
     TIM_OC_InitTypeDef bln_pwm_handler     = {0};
     TIM_SlaveConfigTypeDef bln_clk_handler = {0};
 
-    bln_time_handler.Instance         = BLN_TIME;
-    bln_time_handler.Init.Prescaler   = div;
-    bln_time_handler.Init.Period      = cou;
-    bln_time_handler.Init.CounterMode = TIM_COUNTERMODE_UP;
+    bln_time_handler.Instance               = BLN_TIME;
+    bln_time_handler.Init.Prescaler         = div;
+    bln_time_handler.Init.Period            = cou;
+    bln_time_handler.Init.CounterMode       = TIM_COUNTERMODE_UP;
+    bln_time_handler.Init.RepetitionCounter =  10 - 1;                  /* N次溢出产生一次更新 */
     HAL_TIM_PWM_Init(&bln_time_handler);
 
     bln_pwm_handler.OCMode     = TIM_OCMODE_PWM1;                       /* PWM1输出模式 */
@@ -68,7 +68,7 @@ void comp_time_init(uint16_t div, uint16_t cou) {
     bln_pwm_handler.Pulse      = cou / 2;                               /* 输出比较值（占空比）*/
     HAL_TIM_PWM_ConfigChannel(&bln_time_handler, &bln_pwm_handler, BLN_TIME_CHANNEL);
 
-    bln_clk_handler.InputTrigger     = TIM_TS_ITR2;                     /* 时钟源为TIM3 */
+    bln_clk_handler.InputTrigger     = TIM_TS_ITR2;                     /* 时钟源为TIM4 */
     bln_clk_handler.SlaveMode        = TIM_SLAVEMODE_EXTERNAL1;         /* 外部时钟模式1 */
     HAL_TIM_SlaveConfigSynchro(&bln_time_handler, &bln_clk_handler);
 
@@ -104,10 +104,11 @@ uint16_t get_digs(uint32_t time_tota) {
     uint8_t size = 0;do {size++;time_tota /= 10;} while (time_tota > 0);return size;
 }
 
-void LED_TIME_IRQHandler(void) {HAL_TIM_IRQHandler(&led_time_handler);}
+void LED_BLN_UP_IRQHandler(void) {
+    
+    HAL_TIM_IRQHandler(&led_time_handler);HAL_TIM_IRQHandler(&bln_time_handler);
+}
 
-void WDG_TIME_IRQHandler(void) {HAL_TIM_IRQHandler(&wdg_time_handler);}
-
-void BLN_TIME_IRQHandler(void) {HAL_TIM_IRQHandler(&bln_time_handler);}
+void WDG_XXX_TRG_COM_IRQHandler(void) {HAL_TIM_IRQHandler(&wdg_time_handler);}
 
 void KIC_TIME_IRQHandler(void) {HAL_TIM_IRQHandler(&kic_time_handler);}
