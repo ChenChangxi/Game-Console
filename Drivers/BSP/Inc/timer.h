@@ -21,12 +21,19 @@
 
 /* 输出比较 */
 #define BLN_TIME                    TIM8
-#define BLN_TIME_CHANNEL            TIM_CHANNEL_2
+#define BLN_TIME_PWM_CHANNEL        TIM_CHANNEL_3
+#define BLN_TIME_PHASEX_CHANNEL     TIM_CHANNEL_1
+#define BLN_TIME_PHASEY_CHANNEL     TIM_CHANNEL_2
+#define BLN_TIME_PHASEX_PIN         GPIO_PIN_6
+#define BLN_TIME_PHASEY_PIN         GPIO_PIN_7
+#define BLN_TIME_PHASE_PIN          GPIO_PIN_9
 #define BLN_TIME_PORT               GPIOC
-#define BLN_TIME_PIN                GPIO_PIN_7
+#define BLN_TIME_PIN                GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8
 #define BLN_TIME_AF                 GPIO_AF3_TIM8
-#define BLN_TIME_IRQn               TIM8_UP_TIM13_IRQn
-#define BLN_TIME_IRQHandler         TIM8_UP_IRQHandler
+#define BLN_TIME_UP_IRQn            TIM8_UP_TIM13_IRQn
+#define BLN_TIME_CC_IRQn            TIM8_CC_IRQn
+#define BLN_TIME_UP_IRQHandler      TIM8_UP_IRQHandler
+#define BLN_TIME_CC_IRQHandler      TIM8_CC_IRQHandler
 #define BLN_GPIO_CLK_ENABLE()       do {__HAL_RCC_GPIOC_CLK_ENABLE();} while (0)
 #define BLN_TIME_CLK_ENABLE()       do {__HAL_RCC_TIM8_CLK_ENABLE();}  while (0)
 
@@ -58,8 +65,8 @@
 #define LED_BLN_UP_IRQHandler       TIM8_UP_TIM13_IRQHandler
 #define WDG_XXX_TRG_COM_IRQHandler  TIM8_TRG_COM_TIM14_IRQHandler
 
-/* 0~100折返 */
-uint16_t get_pers(uint16_t per);
+/* 0~1000折返 */
+uint16_t get_pers(uint16_t per, uint16_t *cou);
 
 /* 获取整数位数 */
 uint16_t get_digs(uint32_t time_tota);
@@ -73,6 +80,8 @@ void capt_time_init(uint16_t div, uint16_t cou);
 
 /* 变量声明 */
 extern uint16_t ins;
+extern uint16_t cnx;
+extern uint16_t cny;
 extern uint16_t time_stat;       /* 0为发送状态，1为边沿状态，2~15为计数周期数 */
 extern uint16_t time_coun;       /* 计数器计数值 */
 extern TIM_HandleTypeDef led_time_handler;

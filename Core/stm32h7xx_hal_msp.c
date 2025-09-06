@@ -4,28 +4,23 @@
 
 void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 
-    if (huart->Instance == USART_UX) {
+    if (huart->Instance == USART) {
 
         GPIO_InitTypeDef gpio_handler = {0};
 
-        USART_UX_CLK_ENABLE();
-        USART_TX_GPIO_CLK_ENABLE();
-        USART_RX_GPIO_CLK_ENABLE();
+        USART_CLK_ENABLE();
+        USART_GPIO_CLK_ENABLE();
 
-        gpio_handler.Pin       = USART_TX_GPIO_PIN;
+        gpio_handler.Pin       = USART_GPIO_PIN;
         gpio_handler.Mode      = GPIO_MODE_AF_PP;
-        gpio_handler.Alternate = USART_TX_GPIO_AF;
+        gpio_handler.Alternate = USART_GPIO_AF;
         gpio_handler.Pull      = GPIO_PULLUP;
         gpio_handler.Speed     = GPIO_SPEED_FREQ_HIGH;
-        HAL_GPIO_Init(USART_TX_GPIO_PORT, &gpio_handler);
+        HAL_GPIO_Init(USART_GPIO_PORT, &gpio_handler);
 
-        gpio_handler.Pin       = USART_RX_GPIO_PIN;
-        gpio_handler.Alternate = USART_RX_GPIO_AF;
-        HAL_GPIO_Init(USART_RX_GPIO_PORT, &gpio_handler);
-
-#if USART_UX_EN_RX
-        HAL_NVIC_SetPriority(USART_UX_IRQn, 3, 3);
-        HAL_NVIC_EnableIRQ(USART_UX_IRQn);
+#if USART_EN_RX
+        HAL_NVIC_SetPriority(USART_IRQn, 3, 3);
+        HAL_NVIC_EnableIRQ(USART_IRQn);
 #endif
     }
 }
@@ -70,7 +65,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
     }
 }
 
-void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
+void HAL_TIM_OC_MspInit(TIM_HandleTypeDef *htim) {
 
     if (htim->Instance == BLN_TIME) {
 
@@ -85,8 +80,15 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
         bln_gpio_handler.Pull      = GPIO_PULLDOWN;
         bln_gpio_handler.Speed     = GPIO_SPEED_FREQ_HIGH;
         HAL_GPIO_Init(BLN_TIME_PORT, &bln_gpio_handler);
-        HAL_NVIC_EnableIRQ(BLN_TIME_IRQn);
-        HAL_NVIC_SetPriority(BLN_TIME_IRQn, 3, 1);
+
+        bln_gpio_handler.Pin       = BLN_TIME_PHASE_PIN;
+        bln_gpio_handler.Mode      = GPIO_MODE_OUTPUT_PP;
+        HAL_GPIO_Init(BLN_TIME_PORT, &bln_gpio_handler);
+
+        HAL_NVIC_EnableIRQ(BLN_TIME_UP_IRQn);
+        HAL_NVIC_EnableIRQ(BLN_TIME_CC_IRQn);
+        HAL_NVIC_SetPriority(BLN_TIME_UP_IRQn, 3, 1);
+        HAL_NVIC_SetPriority(BLN_TIME_CC_IRQn, 3, 1);
     }
 }
 

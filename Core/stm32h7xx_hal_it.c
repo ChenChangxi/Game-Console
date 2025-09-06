@@ -4,7 +4,7 @@
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
-    if (huart->Instance == USART_UX) {
+    if (huart->Instance == USART) {
 
         if (!(uart_stat & 0x8000)) {
 
@@ -12,7 +12,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
             else {
 
                 if (buff == 0x0d) uart_stat |= 0x4000;                                               /* 收到了\r */
-                else {data[uart_stat++] = buff;if (uart_stat >= USART_UX_DATA_SIZE) uart_stat = 0;}  /* 到这里前两位为0 */
+                else {data[uart_stat++] = buff;if (uart_stat >= USART_DATA_SIZE) uart_stat = 0;}  /* 到这里前两位为0 */
             }
         }
     }
@@ -38,8 +38,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
     if (htim->Instance == LED_TIME) {LED0_TOGGLE();LED1_TOGGLE();}
     else if (htim->Instance == WDG_TIME) {iwdg_feed();wwdg_feed();}
-    else if (htim->Instance == BLN_TIME) {__HAL_TIM_SET_COMPARE(&bln_time_handler, BLN_TIME_CHANNEL, get_pers(400));}
-    else if (htim->Instance == KIC_TIME) {
+    else if (htim->Instance == BLN_TIME) {
+
+        __HAL_TIM_SET_COMPARE(&bln_time_handler, BLN_TIME_PWM_CHANNEL, get_pers(400, &ins));           /* 改变占空比 */
+        __HAL_TIM_SET_COMPARE(&bln_time_handler, BLN_TIME_PHASEX_CHANNEL, get_pers(400, &cnx));        /* 改变相位值 */
+        __HAL_TIM_SET_COMPARE(&bln_time_handler, BLN_TIME_PHASEY_CHANNEL, get_pers(400, &cny) + 500);  /* 改变相位值（50%初相）*/
+
+    } else if (htim->Instance == KIC_TIME) {
 
         if (!(time_stat & 0x8000) && (time_stat & 0x4000)) {  /* 未准备发送且来了上升沿 */
 
@@ -52,6 +57,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
                 TIM_SET_CAPTUREPOLARITY(&kic_time_handler, KIC_TIME_CHANNEL, TIM_ICPOLARITY_RISING);    /* 改为上升沿触发 */
             }
         }
+    }
+}
+
+void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim) {
+
+    if (htim->Instance == BLN_TIME) {
+
+        GPIO_PinState x = HAL_GPIO_ReadPin(BLN_TIME_PORT, BLN_TIME_PHASEX_PIN);
+        GPIO_PinState y = HAL_GPIO_ReadPin(BLN_TIME_PORT, BLN_TIME_PHASEY_PIN);
+        HAL_GPIO_WritePin(BLN_TIME_PORT, BLN_TIME_PHASE_PIN, (x ^ y) ? GPIO_PIN_SET : GPIO_PIN_RESET);  /* 调制波形信号 */
     }
 }
 
