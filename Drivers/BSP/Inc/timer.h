@@ -28,13 +28,19 @@
 #define BLN_TIME_PHASEY_PIN         GPIO_PIN_7
 #define BLN_TIME_PHASE_PIN          GPIO_PIN_9
 #define BLN_TIME_PORT               GPIOC
+#define BLC_TIME_PORT               GPIOB         /* 互补通道 */
+#define BLB_TIME_PORT               GPIOI         /* 刹车断路 */
 #define BLN_TIME_PIN                GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8
+#define BLC_TIME_PIN                GPIO_PIN_15
+#define BLB_TIME_PIN                GPIO_PIN_4
 #define BLN_TIME_AF                 GPIO_AF3_TIM8
 #define BLN_TIME_UP_IRQn            TIM8_UP_TIM13_IRQn
 #define BLN_TIME_CC_IRQn            TIM8_CC_IRQn
 #define BLN_TIME_UP_IRQHandler      TIM8_UP_IRQHandler
 #define BLN_TIME_CC_IRQHandler      TIM8_CC_IRQHandler
 #define BLN_GPIO_CLK_ENABLE()       do {__HAL_RCC_GPIOC_CLK_ENABLE();} while (0)
+#define BLC_GPIO_CLK_ENABLE()       do {__HAL_RCC_GPIOB_CLK_ENABLE();} while (0)
+#define BLB_GPIO_CLK_ENABLE()       do {__HAL_RCC_GPIOI_CLK_ENABLE();} while (0)
 #define BLN_TIME_CLK_ENABLE()       do {__HAL_RCC_TIM8_CLK_ENABLE();}  while (0)
 
 /* 输入捕获 */
@@ -75,7 +81,7 @@ uint16_t get_digs(uint32_t time_tota);
 void deay_time_init(uint16_t led_div, uint16_t led_cou, 
                     uint16_t wdg_div, uint16_t wdg_cou);
 void mast_time_init(uint16_t div, uint16_t cou);
-void comp_time_init(uint16_t div, uint16_t cou);
+void comp_time_init(uint16_t div, uint16_t cou, uint16_t dea);
 void capt_time_init(uint16_t div, uint16_t cou);
 
 /* 变量声明 */

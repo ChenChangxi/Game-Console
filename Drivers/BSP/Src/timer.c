@@ -53,20 +53,29 @@ void mast_time_init(uint16_t div, uint16_t cou) {
     HAL_TIM_Base_Start(&mst_time_handler);
 }
 
-void comp_time_init(uint16_t div, uint16_t cou) {
+void comp_time_init(uint16_t div, uint16_t cou, uint16_t dea) {
 
-    TIM_OC_InitTypeDef bln_coc_handler     = {0};
-    TIM_SlaveConfigTypeDef bln_clk_handler = {0};
+    TIM_OC_InitTypeDef             bln_coc_handler = {0};
+    TIM_BreakDeadTimeConfigTypeDef dea_brk_handler = {0};
+    TIM_SlaveConfigTypeDef         bln_clk_handler = {0};
 
     bln_time_handler.Instance               = BLN_TIME;
     bln_time_handler.Init.Prescaler         = div;
     bln_time_handler.Init.Period            = cou;
     bln_time_handler.Init.CounterMode       = TIM_COUNTERMODE_UP;
-    bln_time_handler.Init.RepetitionCounter =  10 - 1;                       /* N次溢出产生一次更新 */
+    bln_time_handler.Init.RepetitionCounter = 10 - 1;                        /* N次溢出产生一次更新 */
+    bln_time_handler.Init.ClockDivision     = TIM_CLOCKDIVISION_DIV4;        /* 死区滤波采样时钟分频 */
     HAL_TIM_OC_Init(&bln_time_handler);
 
-    bln_coc_handler.OCMode     = TIM_OCMODE_PWM1;                            /* PWM1输出模式 */
-    bln_coc_handler.OCPolarity = TIM_OCPOLARITY_HIGH;                        /* 高电平有效 */
+    // bln_clk_handler.InputTrigger     = TIM_TS_ITR2;                          /* 时钟源为TIM4 */
+    // bln_clk_handler.SlaveMode        = TIM_SLAVEMODE_EXTERNAL1;              /* 外部时钟模式1 */
+    // HAL_TIM_SlaveConfigSynchro(&bln_time_handler, &bln_clk_handler);
+
+    bln_coc_handler.OCMode       = TIM_OCMODE_PWM1;                          /* 输出模式 */
+    bln_coc_handler.OCPolarity   = TIM_OCPOLARITY_HIGH;                      /* 有效电平 */
+    bln_coc_handler.OCNPolarity  = TIM_OCNPOLARITY_LOW;                      /* 互补输出有效电平 */
+    bln_coc_handler.OCIdleState  = TIM_OCIDLESTATE_RESET;                    /* 刹车断路后有效电平（OIS）*/
+    bln_coc_handler.OCNIdleState = TIM_OCNIDLESTATE_RESET;                   /* 互补刹车断路后有效电平（OISN）*/
     HAL_TIM_OC_ConfigChannel(&bln_time_handler, &bln_coc_handler, BLN_TIME_PWM_CHANNEL);
 
     bln_coc_handler.OCMode     = TIM_OCMODE_TOGGLE;                          /* PHASE输出模式 */
@@ -76,17 +85,23 @@ void comp_time_init(uint16_t div, uint16_t cou) {
     bln_coc_handler.OCPolarity = TIM_OCPOLARITY_LOW;                         /* 异或后高电平有效 */
     HAL_TIM_OC_ConfigChannel(&bln_time_handler, &bln_coc_handler, BLN_TIME_PHASEY_CHANNEL);
 
-    bln_clk_handler.InputTrigger     = TIM_TS_ITR2;                          /* 时钟源为TIM4 */
-    bln_clk_handler.SlaveMode        = TIM_SLAVEMODE_EXTERNAL1;              /* 外部时钟模式1 */
-    HAL_TIM_SlaveConfigSynchro(&bln_time_handler, &bln_clk_handler);
+    dea_brk_handler.LockLevel        = TIM_LOCKLEVEL_OFF;                    /* 关闭寄存器锁 */
+    dea_brk_handler.DeadTime         = dea;                                  /* 死区时间 */
+    dea_brk_handler.BreakState       = TIM_BREAK_ENABLE;                     /* 使能刹车断路 */
+    dea_brk_handler.BreakPolarity    = TIM_BREAKPOLARITY_HIGH;               /* 刹车断路极性 */
+    dea_brk_handler.OffStateRunMode  = TIM_OSSR_ENABLE;                      /* 通道关闭后输出无效电平 */
+    dea_brk_handler.OffStateIDLEMode = TIM_OSSI_ENABLE;                      /* 刹车断路后输出OIS和OISN电平 */
+    dea_brk_handler.AutomaticOutput  = TIM_AUTOMATICOUTPUT_ENABLE;           /* 刹车断路后自动恢复 */
+    HAL_TIMEx_ConfigBreakDeadTime(&bln_time_handler, &dea_brk_handler);
 
-    __HAL_TIM_ENABLE_IT(&bln_time_handler, TIM_IT_UPDATE);                   /* 启动更新中断*/
+    __HAL_TIM_ENABLE_IT(&bln_time_handler, TIM_IT_UPDATE);                   /* 使能更新中断 */
     __HAL_TIM_ENABLE_OCxPRELOAD(&bln_time_handler, BLN_TIME_PWM_CHANNEL);    /* 使能通道预装载（PWM）*/
     __HAL_TIM_ENABLE_OCxPRELOAD(&bln_time_handler, BLN_TIME_PHASEX_CHANNEL); /* 使能通道预装载（PHASEX）*/
     __HAL_TIM_ENABLE_OCxPRELOAD(&bln_time_handler, BLN_TIME_PHASEY_CHANNEL); /* 使能通道预装载（PHASEY）*/
-    HAL_TIM_OC_Start(&bln_time_handler, BLN_TIME_PWM_CHANNEL);               /* 启动计数器且使能输出（PWM）*/
-    HAL_TIM_OC_Start_IT(&bln_time_handler, BLN_TIME_PHASEX_CHANNEL);         /* 启动计数器且使能输出和中断（PHASEX）*/
-    HAL_TIM_OC_Start_IT(&bln_time_handler, BLN_TIME_PHASEY_CHANNEL);         /* 启动计数器且使能输出和中断（PHASEY）*/
+    HAL_TIM_OC_Start(&bln_time_handler, BLN_TIME_PWM_CHANNEL);               /* 使能输出（PWM）*/
+    HAL_TIMEx_OCN_Start(&bln_time_handler, BLN_TIME_PWM_CHANNEL);            /* 使能互补输出（PWM）*/
+    HAL_TIM_OC_Start_IT(&bln_time_handler, BLN_TIME_PHASEX_CHANNEL);         /* 使能输出和中断（PHASEX）*/
+    HAL_TIM_OC_Start_IT(&bln_time_handler, BLN_TIME_PHASEY_CHANNEL);         /* 使能输出和中断（PHASEY）*/
 }
 
 void capt_time_init(uint16_t div, uint16_t cou) {
@@ -105,7 +120,7 @@ void capt_time_init(uint16_t div, uint16_t cou) {
     kic_cap_handler.ICSelection = TIM_ICSELECTION_INDIRECTTI;  /* 映射关系 */
     HAL_TIM_IC_ConfigChannel(&kic_time_handler, &kic_cap_handler, KIC_TIME_CHANNEL);
 
-    __HAL_TIM_ENABLE_IT(&kic_time_handler, TIM_IT_UPDATE);     /* 启动更新中断*/
+    __HAL_TIM_ENABLE_IT(&kic_time_handler, TIM_IT_UPDATE);     /* 启动更新中断 */
     HAL_TIM_IC_Start_IT(&kic_time_handler, KIC_TIME_CHANNEL);  /* 启动计数器和捕获中断且使能输入 */
 }
 

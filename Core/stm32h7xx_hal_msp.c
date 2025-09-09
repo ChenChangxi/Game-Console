@@ -72,6 +72,8 @@ void HAL_TIM_OC_MspInit(TIM_HandleTypeDef *htim) {
         GPIO_InitTypeDef bln_gpio_handler = {0};
 
         BLN_GPIO_CLK_ENABLE();
+        BLC_GPIO_CLK_ENABLE();
+        BLB_GPIO_CLK_ENABLE();
         BLN_TIME_CLK_ENABLE();
 
         bln_gpio_handler.Pin       = BLN_TIME_PIN;
@@ -80,6 +82,12 @@ void HAL_TIM_OC_MspInit(TIM_HandleTypeDef *htim) {
         bln_gpio_handler.Pull      = GPIO_PULLDOWN;
         bln_gpio_handler.Speed     = GPIO_SPEED_FREQ_HIGH;
         HAL_GPIO_Init(BLN_TIME_PORT, &bln_gpio_handler);
+
+        bln_gpio_handler.Pin       = BLC_TIME_PIN;
+        HAL_GPIO_Init(BLC_TIME_PORT, &bln_gpio_handler);
+
+        bln_gpio_handler.Pin       = BLB_TIME_PIN;
+        HAL_GPIO_Init(BLB_TIME_PORT, &bln_gpio_handler);
 
         bln_gpio_handler.Pin       = BLN_TIME_PHASE_PIN;
         bln_gpio_handler.Mode      = GPIO_MODE_OUTPUT_PP;

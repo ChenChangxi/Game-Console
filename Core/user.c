@@ -16,7 +16,8 @@ int main(void) {
     wwdg_init(WWDG_PRESCALER_8, 0x7F, 0x5F);
     deay_time_init(12000 - 1, 10000 - 1, 7200 - 1, 1000 - 1);     /* 500ms,30ms */
     mast_time_init(1 - 1, 5 - 1);                                 /* 500ns */
-    comp_time_init(1 - 1, 1000 - 1);                              /* 500us */
+    // comp_time_init(1 - 1, 1000 - 1, 0xED);                        /* 500us,12us */
+    comp_time_init(120 - 1, 1000 - 1, 0xED);                      /* 500us,12us */
     capt_time_init(240 - 1, 65535 - 1);                           /* 1us */
     usart_transmit(feed_iwdg, strlen(feed_iwdg));
     usart_transmit(feed_wwdg, strlen(feed_wwdg));
