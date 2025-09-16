@@ -67,9 +67,9 @@ void comp_time_init(uint16_t div, uint16_t cou, uint16_t dea) {
     bln_time_handler.Init.ClockDivision     = TIM_CLOCKDIVISION_DIV4;        /* 死区滤波采样时钟分频 */
     HAL_TIM_OC_Init(&bln_time_handler);
 
-    // bln_clk_handler.InputTrigger     = TIM_TS_ITR2;                          /* 时钟源为TIM4 */
-    // bln_clk_handler.SlaveMode        = TIM_SLAVEMODE_EXTERNAL1;              /* 外部时钟模式1 */
-    // HAL_TIM_SlaveConfigSynchro(&bln_time_handler, &bln_clk_handler);
+    bln_clk_handler.InputTrigger     = TIM_TS_ITR2;                          /* 时钟源为TIM4 */
+    bln_clk_handler.SlaveMode        = TIM_SLAVEMODE_EXTERNAL1;              /* 外部时钟模式1 */
+    HAL_TIM_SlaveConfigSynchro(&bln_time_handler, &bln_clk_handler);
 
     bln_coc_handler.OCMode       = TIM_OCMODE_PWM1;                          /* 输出模式 */
     bln_coc_handler.OCPolarity   = TIM_OCPOLARITY_HIGH;                      /* 有效电平 */
@@ -104,7 +104,7 @@ void comp_time_init(uint16_t div, uint16_t cou, uint16_t dea) {
     HAL_TIM_OC_Start_IT(&bln_time_handler, BLN_TIME_PHASEY_CHANNEL);         /* 使能输出和中断（PHASEY）*/
 }
 
-void capt_time_init(uint16_t div, uint16_t cou) {
+void capt_time_init(uint16_t div, uint32_t cou) {
 
     TIM_IC_InitTypeDef kic_cap_handler = {0};
 

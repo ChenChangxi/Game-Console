@@ -1,4 +1,5 @@
 #include "key.h"
+#include "tpad.h"
 #include "timer.h"
 #include "usart.h"
 
@@ -105,7 +106,7 @@ void HAL_TIM_IC_MspInit(TIM_HandleTypeDef *htim) {
     if (htim->Instance == KIC_TIME) {
 
         GPIO_InitTypeDef kic_gpio_handler = {0};
-        
+
         KIC_GPIO_CLK_ENABLE();
         KIC_TIME_CLK_ENABLE();
 
@@ -117,5 +118,21 @@ void HAL_TIM_IC_MspInit(TIM_HandleTypeDef *htim) {
         HAL_GPIO_Init(KIC_TIME_PORT, &kic_gpio_handler);
         HAL_NVIC_EnableIRQ(KIC_TIME_IRQn);
         HAL_NVIC_SetPriority(KIC_TIME_IRQn, 3, 2);
+
+    } else if (htim->Instance == TPAD_TIME) {
+
+        GPIO_InitTypeDef tpad_gpio_handler = {0};
+
+        TPAD_GPIO_CLK_ENABLE();
+        TPAD_TIME_CLK_ENABLE();
+
+        tpad_gpio_handler.Pin       = TPAD_GPIO_PIN;
+        tpad_gpio_handler.Mode      = GPIO_MODE_AF_PP;
+        tpad_gpio_handler.Alternate = TPAD_GPIO_AF;
+        tpad_gpio_handler.Pull      = GPIO_NOPULL;
+        tpad_gpio_handler.Speed     = GPIO_SPEED_FREQ_HIGH;
+        HAL_GPIO_Init(TPAD_GPIO_PORT, &tpad_gpio_handler);
+        HAL_NVIC_EnableIRQ(TPAD_TIME_IRQn);
+        HAL_NVIC_SetPriority(TPAD_TIME_IRQn, 3, 3);
     }
 }

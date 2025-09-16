@@ -82,7 +82,7 @@ void deay_time_init(uint16_t led_div, uint16_t led_cou,
                     uint16_t wdg_div, uint16_t wdg_cou);
 void mast_time_init(uint16_t div, uint16_t cou);
 void comp_time_init(uint16_t div, uint16_t cou, uint16_t dea);
-void capt_time_init(uint16_t div, uint16_t cou);
+void capt_time_init(uint16_t div, uint32_t cou);
 
 /* 变量声明 */
 extern uint16_t ins;

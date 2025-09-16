@@ -1,4 +1,5 @@
 #include "key.h"
+#include "tpad.h"
 #include "timer.h"
 #include "usart.h"
 #include "stdio.h"
@@ -14,11 +15,11 @@ int main(void) {
     usart_init(115200);
     iwdg_init(IWDG_PRESCALER_8, 140);
     wwdg_init(WWDG_PRESCALER_8, 0x7F, 0x5F);
+    tpad_init(6 - 1);                                             /* 25ns */
     deay_time_init(12000 - 1, 10000 - 1, 7200 - 1, 1000 - 1);     /* 500ms,30ms */
     mast_time_init(1 - 1, 5 - 1);                                 /* 500ns */
-    // comp_time_init(1 - 1, 1000 - 1, 0xED);                        /* 500us,12us */
-    comp_time_init(120 - 1, 1000 - 1, 0xED);                      /* 500us,12us */
-    capt_time_init(240 - 1, 65535 - 1);                           /* 1us */
+    comp_time_init(1 - 1, 1000 - 1, 0xED);                        /* 500us,12us */
+    capt_time_init(240 - 1, 0xFFFFFFFF - 1);                      /* 1us */
     usart_transmit(feed_iwdg, strlen(feed_iwdg));
     usart_transmit(feed_wwdg, strlen(feed_wwdg));
     
@@ -31,6 +32,7 @@ int main(void) {
 
     while (1) {
 
+        if (ctor_coun * 25 > 11000) usart_transmit(, );
         if (uart_stat & 0x8000) {usart_transmit(data, uart_stat & 0x3fff);uart_stat = 0;}    /* 低14位为长度 */
         if (time_stat & 0x8000) {
             

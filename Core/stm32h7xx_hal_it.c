@@ -1,6 +1,7 @@
 #include "key.h"
 #include "timer.h"
 #include "usart.h"
+#include "tpad.h"
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
@@ -12,7 +13,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
             else {
 
                 if (buff == 0x0d) uart_stat |= 0x4000;                                               /* 收到了\r */
-                else {data[uart_stat++] = buff;if (uart_stat >= USART_DATA_SIZE) uart_stat = 0;}  /* 到这里前两位为0 */
+                else {data[uart_stat++] = buff;if (uart_stat >= USART_DATA_SIZE) uart_stat = 0;}     /* 到这里前两位为0 */
             }
         }
     }
@@ -40,9 +41,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     else if (htim->Instance == WDG_TIME) {iwdg_feed();wwdg_feed();}
     else if (htim->Instance == BLN_TIME) {
 
-        __HAL_TIM_SET_COMPARE(&bln_time_handler, BLN_TIME_PWM_CHANNEL, get_pers(400, &ins));           /* 改变占空比 */
-        __HAL_TIM_SET_COMPARE(&bln_time_handler, BLN_TIME_PHASEX_CHANNEL, get_pers(400, &cnx));        /* 改变相位值 */
-        __HAL_TIM_SET_COMPARE(&bln_time_handler, BLN_TIME_PHASEY_CHANNEL, get_pers(400, &cny) + 500);  /* 改变相位值（50%初相）*/
+        __HAL_TIM_SET_COMPARE(&bln_time_handler, BLN_TIME_PWM_CHANNEL, get_pers(400, &ins));              /* 改变占空比 */
+        __HAL_TIM_SET_COMPARE(&bln_time_handler, BLN_TIME_PHASEX_CHANNEL, get_pers(400, &cnx));           /* 改变相位值 */
+        __HAL_TIM_SET_COMPARE(&bln_time_handler, BLN_TIME_PHASEY_CHANNEL, get_pers(400, &cny) + 500);     /* 改变相位值（50%初相）*/
 
     } else if (htim->Instance == KIC_TIME) {
 
@@ -93,5 +94,11 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
                 TIM_SET_CAPTUREPOLARITY(&kic_time_handler, KIC_TIME_CHANNEL, TIM_ICPOLARITY_RISING);    /* 改为上升沿触发 */
             }
         }
+    } else if (htim->Instance == TPAD_TIME) {                 /* 电容充电到临界值 */
+
+        ctor_coun = HAL_TIM_ReadCapturedValue(&tpad_time_handler, TPAD_TIME_CHANNEL);
+        LL_GPIO_SetPinMode(TPAD_GPIO_PORT, TPAD_GPIO_PIN, GPIO_MODE_OUTPUT_PP);        /* 电容放电 */
+        LL_GPIO_SetPinMode(TPAD_GPIO_PORT, TPAD_GPIO_PIN, GPIO_MODE_AF_PP);            /* 电容充电 */
+        __HAL_TIM_SET_COUNTER(&tpad_time_handler, 0);
     }
 }
