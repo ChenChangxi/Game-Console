@@ -9,7 +9,7 @@ void tpad_init(uint16_t div) {
 
     tpad_time_handler.Instance         = TPAD_TIME;
     tpad_time_handler.Init.Prescaler   = div;
-    tpad_time_handler.Init.Period      = 0xFFFFFFFF - 1;
+    tpad_time_handler.Init.Period      = 0xffffffff - 1;
     tpad_time_handler.Init.CounterMode = TIM_COUNTERMODE_UP;
     HAL_TIM_IC_Init(&tpad_time_handler);
 

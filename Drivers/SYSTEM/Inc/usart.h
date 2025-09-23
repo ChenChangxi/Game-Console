@@ -16,7 +16,7 @@
 #define USART_CLK_ENABLE()        do {__HAL_RCC_USART3_CLK_ENABLE();} while(0)
 #define USART_EN_RX               1                 /* 条件编译是否允许读中断 */
 #define USART_BUFF_SIZE           1                 /* 缓冲区大小 */
-#define USART_DATA_SIZE           200               /* 数据区大小 */
+#define USART_DATA_SIZE           300               /* 数据区大小 */
 
 /* 条件编译是否定义 */
 extern UART_HandleTypeDef uart_handler;              /* UART句柄 */
