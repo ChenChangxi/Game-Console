@@ -1,50 +1,11 @@
 #include "at24c02.h"
 
-uint8_t          atc_ders[] = "已擦除\r\n";
-uint8_t          atc_dout[] = "数据溢出\r\n";
-uint8_t          atc_addr;
-uint8_t          atc_erse[256] = {0xff};
-GPIO_InitTypeDef atc_handler;
+uint8_t atc_ders[] = "已擦除\r\n";
+uint8_t atc_dout[] = "数据溢出\r\n";
+uint8_t atc_addr;
+uint8_t atc_erse[256] = {0xff};
 
-void at24c02_init(void) {
-
-    ATC_CLK_ENABLE();
-
-    atc_handler.Pin   = ATC_SCL_PIN;
-    atc_handler.Mode  = GPIO_MODE_OUTPUT_PP;
-    atc_handler.Pull  = GPIO_PULLUP;
-    atc_handler.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(ATC_PORT, &atc_handler);
-
-    atc_handler.Pin   = ATC_SDA_PIN;
-    atc_handler.Mode  = GPIO_MODE_OUTPUT_OD;
-    HAL_GPIO_Init(ATC_PORT, &atc_handler);
-
-    atc_read(0xff, &atc_addr, 1);
-}
-
-void iic_start(void) {ATC_SDA_SET(1,0);ATC_SCL_SET(1,2);ATC_SDA_SET(0,2);ATC_SCL_SET(0,2);}
-
-void iic_send_byte(uint8_t dat) {
-
-    for (uint8_t i=0;i<8;++i) {ATC_SDA_SET((dat & 0x80)>>7,2);ATC_SCL_SET(1,2);ATC_SCL_SET(0,2);dat <<= 1;}
-}
-
-uint8_t iic_read_byte(void) {
-
-    uint8_t dat = 0,sta = 0;ATC_SDA_SET(1,2);
-    for (uint8_t i=0;i<8;++i) {dat <<= 1;ATC_SCL_SET(1,2);ATC_SDA_GET(sta);ATC_SCL_SET(0,2);dat += sta;} 
-    return dat;
-}
-
-void iic_wait_ack(void) {
-    
-    uint8_t sta = 0;ATC_SDA_SET(1,2);ATC_SCL_SET(1,2);ATC_SDA_GET(sta);ATC_SCL_SET(0,2);if (sta) iic_end();
-}
-
-void iic_send_ack(uint8_t sta) {ATC_SDA_SET(sta,2);ATC_SCL_SET(1,2);ATC_SCL_SET(0,2);}
-
-void iic_end(void) {ATC_SDA_SET(0,0);ATC_SCL_SET(1,2);ATC_SDA_SET(1,2);}
+void at24c02_init(void) {atc_read(0xff, &atc_addr, 1);}
 
 void atc_write_byte(uint8_t adr, uint8_t dat) {
 

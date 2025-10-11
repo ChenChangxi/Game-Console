@@ -5,6 +5,8 @@
 #include "stdio.h"
 #include "string.h"
 #include "at24c02.h"
+#include "ap3216c.h"
+#include "pcf8574.h"
 
 int main(void) {
 
@@ -13,7 +15,10 @@ int main(void) {
     delay_init(480);
     led_init();
     key_init();
+    iic_init();
     at24c02_init();
+    ap3216c_init();
+    pcf8574_init();
     usart_init(115200);
     iwdg_init(IWDG_PRESCALER_8, 140);
     wwdg_init(WWDG_PRESCALER_8, 0x7f, 0x5f);
@@ -34,7 +39,6 @@ int main(void) {
 
     while (1) {
 
-        // if (ctor_coun * 25 > 11000) usart_transmit(, );
         if (time_stat & 0x8000) {
             
             uint8_t  time_data[KIC_TIME_DATA_SIZE] = {0};
@@ -55,5 +59,6 @@ int main(void) {
             } else if (atc_addr + data_size > 0xfe) usart_transmit(atc_dout, strlen(atc_dout));
             else {atc_write(atc_addr, data, data_size);atc_addr += data_size;atc_write(0xff, &atc_addr, 1);}
         }
+        if (ctor_coun > 120) pcf_write(0, BEEP);else pcf_write(1, BEEP);
     }
 }
