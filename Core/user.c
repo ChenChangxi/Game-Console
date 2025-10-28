@@ -1,5 +1,6 @@
 #include "key.h"
 #include "tpad.h"
+#include "oled.h"
 #include "timer.h"
 #include "usart.h"
 #include "stdio.h"
@@ -16,6 +17,7 @@ int main(void) {
     led_init();
     key_init();
     iic_init();
+    oled_init();
     at24c02_init();
     ap3216c_init();
     pcf8574_init();

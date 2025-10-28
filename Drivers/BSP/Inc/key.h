@@ -9,21 +9,21 @@
 /* 引脚和时钟 */
 #define KEY0_EXTI_PORT          GPIOH
 #define KEY0_EXTI_Pin           GPIO_PIN_3
-#define KEY0_EXTI_CLK_ENABLE()  do {__HAL_RCC_GPIOH_CLK_ENABLE();} while(0)
+#define KEY0_EXTI_CLK_ENABLE()  do {__HAL_RCC_GPIOH_CLK_ENABLE();} while (0)
 #define KEY0_EXTI_IRQn          EXTI3_IRQn
 #define KEY0_EXTI_IRQHandler    EXTI3_IRQHandler
 #define KEY0                    HAL_GPIO_ReadPin(KEY0_EXTI_PORT, KEY0_EXTI_Pin)
 
 #define KEY1_EXTI_PORT          GPIOH
 #define KEY1_EXTI_Pin           GPIO_PIN_2
-#define KEY1_EXTI_CLK_ENABLE()  do {__HAL_RCC_GPIOH_CLK_ENABLE();} while(0)
+#define KEY1_EXTI_CLK_ENABLE()  do {__HAL_RCC_GPIOH_CLK_ENABLE();} while (0)
 #define KEY1_EXTI_IRQn          EXTI2_IRQn
 #define KEY1_EXTI_IRQHandler    EXTI2_IRQHandler
 #define KEY1                    HAL_GPIO_ReadPin(KEY1_EXTI_PORT, KEY1_EXTI_Pin)
 
 #define KEY2_EXTI_PORT          GPIOC
 #define KEY2_EXTI_Pin           GPIO_PIN_13
-#define KEY2_EXTI_CLK_ENABLE()  do {__HAL_RCC_GPIOC_CLK_ENABLE();} while(0)
+#define KEY2_EXTI_CLK_ENABLE()  do {__HAL_RCC_GPIOC_CLK_ENABLE();} while (0)
 #define KEY2_EXTI_IRQn          EXTI15_10_IRQn
 #define KEY2_EXTI_IRQHandler    EXTI15_10_IRQHandler
 #define KEY2                    HAL_GPIO_ReadPin(KEY2_EXTI_PORT, KEY2_EXTI_Pin)

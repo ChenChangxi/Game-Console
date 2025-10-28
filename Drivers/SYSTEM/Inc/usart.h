@@ -13,7 +13,7 @@
 #define USART_IRQn                USART3_IRQn
 #define USART_IRQHandler          USART3_IRQHandler
 #define USART_GPIO_CLK_ENABLE()   do {__HAL_RCC_GPIOB_CLK_ENABLE();} while (0)
-#define USART_CLK_ENABLE()        do {__HAL_RCC_USART3_CLK_ENABLE();} while(0)
+#define USART_CLK_ENABLE()        do {__HAL_RCC_USART3_CLK_ENABLE();} while (0)
 #define USART_EN_RX               1                 /* 条件编译是否允许读中断 */
 #define USART_BUFF_SIZE           1                 /* 缓冲区大小 */
 #define USART_DATA_SIZE           300               /* 数据区大小 */

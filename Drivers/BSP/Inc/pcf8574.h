@@ -8,7 +8,7 @@
 /* INT中断引脚 */
 #define INT_PORT          GPIOB
 #define INT_PIN           GPIO_PIN_12
-#define INT_CLK_ENABLE()  do {__HAL_RCC_GPIOH_CLK_ENABLE();} while(0)
+#define INT_CLK_ENABLE()  do {__HAL_RCC_GPIOH_CLK_ENABLE();} while (0)
 
 /* PCF8574的IO口 */
 #define BEEP   0x00    /* 蜂鸣器引脚 */
