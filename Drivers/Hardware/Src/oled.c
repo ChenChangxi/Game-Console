@@ -36,7 +36,7 @@ void oled_draw_dot(uint8_t x, uint8_t y, uint8_t dot) {
     if (dot) oled_ram[x][y / 8] |= 1<<(y % 8);else oled_ram[x][y / 8] &= ~(1<<(y % 8));
 }
 
-void oled_show_uni(uint8_t x, uint8_t y, uint8_t *uni) {
+void oled_draw_uni(uint8_t x, uint8_t y, uint8_t *uni) {
 
 
 }

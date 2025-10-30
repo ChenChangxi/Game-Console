@@ -16,8 +16,8 @@
 #define OLED_INS_CLK_ENABLE()  do {__HAL_RCC_GPIOB_CLK_ENABLE();} while (0)
 
 /* 8080并口读写 */
-#define OLED_CON(CON,STA) \
-    do {HAL_GPIO_WritePin(OLED_CON_PORT, CON, STA ? GPIO_PIN_SET : GPIO_PIN_RESET);} while (0)
+#define OLED_CON(CON,STE) \
+    do {HAL_GPIO_WritePin(OLED_CON_PORT, CON, STE ? GPIO_PIN_SET : GPIO_PIN_RESET);} while (0)
 #define OLED_INS(INS) \
     do {OLED_INS_PORT -> ODR = (OLED_INS_PORT -> ODR & ~(0x00ff<<2)) | ((0x00ff & INS)<<2);} while (0)
 
@@ -38,7 +38,7 @@ void oled_write_byte(uint8_t con, OLED_Type typ);
 void oled_draw_dot(uint8_t x, uint8_t y, uint8_t dot);
 
 /* 显示字符 */
-void oled_show_uni(uint8_t x, uint8_t y, uint8_t *uni);
+void oled_draw_uni(uint8_t x, uint8_t y, uint8_t *uni);
 
 /* 刷新显存到屏幕 */
 void oled_refresh_ram(void);

@@ -2,6 +2,7 @@
 #include "tpad.h"
 #include "timer.h"
 #include "usart.h"
+#include "lcd.h"
 
 void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 
@@ -135,4 +136,27 @@ void HAL_TIM_IC_MspInit(TIM_HandleTypeDef *htim) {
         HAL_NVIC_EnableIRQ(TPAD_TIME_IRQn);
         HAL_NVIC_SetPriority(TPAD_TIME_IRQn, 3, 3);
     }
+}
+
+void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
+
+    GPIO_InitTypeDef lcd_gpio_handler = {0};
+
+    LCD_CON_CLK_ENABLE();
+    LCD_INS_CLK_ENABLE();
+    LCD_BLN_CLK_ENABLE();
+
+    lcd_gpio_handler.Pin       = LCD_CON_PIN;
+    lcd_gpio_handler.Mode      = GPIO_MODE_AF_PP;
+    lcd_gpio_handler.Alternate = LCD_AF;
+    lcd_gpio_handler.Pull      = GPIO_PULLUP;
+    lcd_gpio_handler.Speed     = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(LCD_CON_PORT, &lcd_gpio_handler);
+
+    lcd_gpio_handler.Pin       = LCD_INS_PIN;
+    HAL_GPIO_Init(LCD_INS_PORT, &lcd_gpio_handler);
+
+    lcd_gpio_handler.Pin       = LCD_BLN_PIN;
+    lcd_gpio_handler.Mode      = GPIO_MODE_OUTPUT_PP;
+    HAL_GPIO_Init(LCD_BLN_PORT, &lcd_gpio_handler);
 }
