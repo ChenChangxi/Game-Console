@@ -1,8 +1,9 @@
 #include "key.h"
+#include "lcd.h"
 #include "tpad.h"
 #include "timer.h"
 #include "usart.h"
-#include "lcd.h"
+#include "sdram.h"
 
 void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 
@@ -143,7 +144,6 @@ void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
     GPIO_InitTypeDef lcd_gpio_handler = {0};
 
     LCD_CON_CLK_ENABLE();
-    LCD_INS_CLK_ENABLE();
     LCD_BLN_CLK_ENABLE();
 
     lcd_gpio_handler.Pin       = LCD_CON_PIN;
@@ -153,10 +153,49 @@ void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
     lcd_gpio_handler.Speed     = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(LCD_CON_PORT, &lcd_gpio_handler);
 
-    lcd_gpio_handler.Pin       = LCD_INS_PIN;
-    HAL_GPIO_Init(LCD_INS_PORT, &lcd_gpio_handler);
-
     lcd_gpio_handler.Pin       = LCD_BLN_PIN;
     lcd_gpio_handler.Mode      = GPIO_MODE_OUTPUT_PP;
     HAL_GPIO_Init(LCD_BLN_PORT, &lcd_gpio_handler);
+}
+
+void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram) {
+
+    GPIO_InitTypeDef sdram_gpio_handler = {0};
+
+    SDRAM_CAS_CLK_ENABLE();
+    SDRAM_RAS_CLK_ENABLE();
+    SDRAM_WER_CLK_ENABLE();
+    SDRAM_CSE_CLK_ENABLE();
+    SDRAM_BAN_CLK_ENABLE();
+    SDRAM_CLK_CLK_ENABLE();
+    SDRAM_CKE_CLK_ENABLE();
+    SDRAM_NBL_CLK_ENABLE();
+
+    sdram_gpio_handler.Pin       = SDRAM_CAS_PIN;
+    sdram_gpio_handler.Mode      = GPIO_MODE_AF_PP;
+    sdram_gpio_handler.Alternate = SDRAM_AF;
+    sdram_gpio_handler.Pull      = GPIO_PULLUP;
+    sdram_gpio_handler.Speed     = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(SDRAM_CAS_PORT, &sdram_gpio_handler);
+
+    sdram_gpio_handler.Pin       = SDRAM_RAS_PIN;
+    HAL_GPIO_Init(SDRAM_RAS_PORT, &sdram_gpio_handler);
+
+    sdram_gpio_handler.Pin       = SDRAM_WER_PIN;
+    HAL_GPIO_Init(SDRAM_WER_PORT, &sdram_gpio_handler);
+
+    sdram_gpio_handler.Pin       = SDRAM_CSE_PIN;
+    HAL_GPIO_Init(SDRAM_CSE_PORT, &sdram_gpio_handler);
+
+    sdram_gpio_handler.Pin       = SDRAM_BAN_PIN;
+    HAL_GPIO_Init(SDRAM_BAN_PORT, &sdram_gpio_handler);
+
+    sdram_gpio_handler.Pin       = SDRAM_CLK_PIN;
+    HAL_GPIO_Init(SDRAM_CLK_PORT, &sdram_gpio_handler);
+
+    sdram_gpio_handler.Pin       = SDRAM_CKE_PIN;
+    HAL_GPIO_Init(SDRAM_CKE_PORT, &sdram_gpio_handler);
+
+    sdram_gpio_handler.Pin       = SDRAM_NBL_PIN;
+    HAL_GPIO_Init(SDRAM_NBL_PORT, &sdram_gpio_handler);
 }

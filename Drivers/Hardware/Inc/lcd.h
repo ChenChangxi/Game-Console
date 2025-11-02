@@ -6,19 +6,13 @@
 #include "sys.h"
 #include "delay.h"
 
-/* 8080并口引脚 */
+/* LCD命令引脚 */
 #define LCD_CON_PORT          GPIOD
-#define LCD_INS_PORT          GPIOE
 #define LCD_BLN_PORT          GPIOB
-#define LCD_CON_PIN           GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_7 | \
-                              GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_13 | GPIO_PIN_14 | \
-                              GPIO_PIN_15
-#define LCD_INS_PIN           GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | \
-                              GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15
+#define LCD_CON_PIN           GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_7 | GPIO_PIN_13
 #define LCD_BLN_PIN           GPIO_PIN_5
 #define LCD_AF                GPIO_AF12_FMC
 #define LCD_CON_CLK_ENABLE()  do {__HAL_RCC_GPIOD_CLK_ENABLE();} while (0)
-#define LCD_INS_CLK_ENABLE()  do {__HAL_RCC_GPIOE_CLK_ENABLE();} while (0)
 #define LCD_BLN_CLK_ENABLE()  do {__HAL_RCC_GPIOB_CLK_ENABLE();} while (0)
 
 /* LCD背光控制 */
