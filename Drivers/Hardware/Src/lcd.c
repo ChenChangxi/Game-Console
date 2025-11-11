@@ -1,6 +1,5 @@
 #include "lcd.h"
 
-LCD_CON                   lcd;
 SRAM_HandleTypeDef        lcd_init_handler;
 FMC_NORSRAM_TimingTypeDef lcd_time_handler, lex_time_handler;
 
@@ -23,25 +22,24 @@ void lcd_init(void) {
     lex_time_handler.DataSetupTime    = 4;                   /* WR低电平（15ns）*/
     lex_time_handler.AddressSetupTime = 4;                   /* WR高电平（15ns）*/
 
-    HAL_SRAM_Init(&lcd_init_handler, &lcd_time_handler, &lex_time_handler);
-    nt35510_init();
+    HAL_SRAM_Init(&lcd_init_handler, &lcd_time_handler, &lex_time_handler);nt35510_init();
 }
 
 void lcd_set_cursor(uint16_t x, uint16_t y) {
 
-    LCD->CMD = lcd.x;LCD->DAT = x>>8;LCD->DAT = x & 0x00ff;
-    LCD->CMD = lcd.y;LCD->DAT = y>>8;LCD->DAT = y & 0x00ff;
+    LCD->CMD = 0x2a00;LCD->DAT = x>>8;LCD->CMD = 0x2a01;LCD->DAT = x & 0x00ff;
+    LCD->CMD = 0x2b00;LCD->DAT = y>>8;LCD->CMD = 0x2b01;LCD->DAT = y & 0x00ff;
 }
 
 void lcd_draw_dot(uint16_t x, uint16_t y, uint16_t dot) {
 
-    lcd_set_cursor(x, y);LCD->CMD = lcd.g;LCD->DAT = dot;
+    lcd_set_cursor(x, y);LCD->CMD = 0x2c00;LCD->DAT = dot;
 }
 
 uint16_t lcd_show_dot(uint16_t x, uint16_t y) {
 
     uint16_t d, r, g, b;
-    lcd_set_cursor(x, y);LCD->CMD = 0x2e;d = LCD->DAT;r = LCD->DAT;g = r & 0x00ff;b = LCD->DAT;
+    lcd_set_cursor(x, y);LCD->CMD = 0x2e00;d = LCD->DAT;r = LCD->DAT;g = r & 0x00ff;b = LCD->DAT;
     return ((r>>11)<<11) | ((g>>2)<<5) | (b>>11);
 }
 
@@ -474,11 +472,10 @@ void nt35510_init(void) {
     LCD->CMD = 0x3500; LCD->DAT = 0x0000;  /* 垂直回归 */
     LCD->CMD = 0x3A00; LCD->DAT = 0x0055;  /* RGB565（兼容MCU，RGB接口）*/
 
-    /* 访问控制 */
-    LCD->CMD = 0x3600; LCD->DAT = 0x0008;  /* MY,MX,MV = 000，从左到右，从上到下
-                                              BGR = 1，红色在前，蓝色在后 */
+    /* 屏幕横竖 */
+    LCD->CMD = 0x3600; LCD->DAT = 0x0008;  /* MY,MX,MV = 000，BGR = 1 */
 
-    /* 屏幕分辨率 */
+    /* 屏幕窗口 */
     LCD->CMD = 0x2A00; LCD->DAT = 0x0000;  /* X start MSB */
     LCD->CMD = 0x2A01; LCD->DAT = 0x0000;  /* X start LSB */
     LCD->CMD = 0x2A02; LCD->DAT = 0x0001;  /* X end   MSB (0x01DF) */

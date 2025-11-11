@@ -22,8 +22,6 @@
     do {OLED_INS_PORT -> ODR = (OLED_INS_PORT -> ODR & ~(0x00ff<<2)) | ((0x00ff & INS)<<2);} while (0)
 
 /* SSD1306指令 */
-#define OLED_ON            0xae        /* 关闭 */
-#define OLED_OFF           0xaf        /* 开启 */
 #define OLED_ROW           0xb0        /* 页基地址 */
 #define OLED_COL_MSB       0x10        /* 行高位基地址 */
 #define OLED_COL_LSB       0x00        /* 行低位基地址 */
@@ -31,14 +29,14 @@
 /* OLED初始化 */
 void oled_init(void);
 
+/* SSD1306初始化 */
+void ssd1306_init(void);
+
 /* 写指令/数据 */
 void oled_write_byte(uint8_t con, OLED_Type typ);
 
 /* 屏幕描点 */
 void oled_draw_dot(uint8_t x, uint8_t y, uint8_t dot);
-
-/* 显示字符 */
-void oled_draw_uni(uint8_t x, uint8_t y, uint8_t *uni);
 
 /* 刷新显存到屏幕 */
 void oled_refresh_ram(void);

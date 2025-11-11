@@ -2,6 +2,7 @@
 #include "lcd.h"
 #include "tpad.h"
 #include "timer.h"
+#include "nand.h"
 #include "usart.h"
 #include "sdram.h"
 
@@ -198,4 +199,31 @@ void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram) {
 
     sdram_gpio_handler.Pin       = SDRAM_NBL_PIN;
     HAL_GPIO_Init(SDRAM_NBL_PORT, &sdram_gpio_handler);
+}
+
+void HAL_NAND_MspInit(NAND_HandleTypeDef *hnand) {
+
+    GPIO_InitTypeDef nand_gpio_handler = {0};
+
+    NAND_NWE_CLK_ENABLE();
+    NAND_NOE_CLK_ENABLE();
+    NAND_NCE_CLK_ENABLE();
+    NAND_NWA_CLK_ENABLE();
+
+    nand_gpio_handler.Pin       = NAND_NWE_PIN;
+    nand_gpio_handler.Mode      = GPIO_MODE_AF_PP;
+    nand_gpio_handler.Alternate = NAND_AF;
+    nand_gpio_handler.Pull      = GPIO_PULLUP;
+    nand_gpio_handler.Speed     = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(NAND_NWE_PORT, &nand_gpio_handler);
+
+    nand_gpio_handler.Pin       = NAND_NOE_PIN;
+    HAL_GPIO_Init(NAND_NOE_PORT, &nand_gpio_handler);
+
+    nand_gpio_handler.Pin       = NAND_NCE_PIN;
+    HAL_GPIO_Init(NAND_NCE_PORT, &nand_gpio_handler);
+
+    nand_gpio_handler.Pin       = NAND_NWA_PIN;
+    nand_gpio_handler.Mode      = GPIO_MODE_INPUT;      /* 低电平有效 */
+    HAL_GPIO_Init(NAND_NWA_PORT, &nand_gpio_handler);
 }

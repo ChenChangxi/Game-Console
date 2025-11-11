@@ -17,6 +17,7 @@ void sdram_init(void) {
     sdram_init_handler.Init.MemoryDataWidth    = FMC_SDRAM_MEM_BUS_WIDTH_16;         /* 数据宽度 */
     sdram_init_handler.Init.RowBitsNumber      = FMC_SDRAM_ROW_BITS_NUM_13;          /* 行地址宽度 */
     sdram_init_handler.Init.ColumnBitsNumber   = FMC_SDRAM_COLUMN_BITS_NUM_9;        /* 列地址宽度 */
+
     sdram_time_handler.RCDDelay             = 2;  /* TRCD 激活到读写时间 */
     sdram_time_handler.RPDelay              = 2;  /* TRP  预充电时间 */
     sdram_time_handler.WriteRecoveryTime    = 2;  /* TWR  写数据时间 */
@@ -24,6 +25,7 @@ void sdram_init(void) {
     sdram_time_handler.LoadToActiveDelay    = 2;  /* TMRD 设置模式到激活时间 */
     sdram_time_handler.SelfRefreshTime      = 9;  /* TRFC 行刷新时间 */
     sdram_time_handler.ExitSelfRefreshDelay = 9;  /* TXSR 休眠结束到激活时间 */
+
     HAL_SDRAM_Init(&sdram_init_handler, &sdram_time_handler);w9825g6kh6_init();
     HAL_SDRAM_ProgramRefreshRate(&sdram_init_handler, 938 - 20);  /* 行刷新速度（留裕量提前刷新）*/
 }
@@ -33,6 +35,8 @@ void w9825g6kh6_init(void) {
     sdram_comd_handler.CommandMode   = FMC_SDRAM_CMD_CLK_ENABLE;
     sdram_comd_handler.CommandTarget = FMC_SDRAM_CMD_TARGET_BANK1;
     HAL_SDRAM_SendCommand(&sdram_init_handler, &sdram_comd_handler, 0x1000);     /* 使能时钟 */
+
+    delay_us(500);
 
     sdram_comd_handler.CommandMode   = FMC_SDRAM_CMD_PALL;
     HAL_SDRAM_SendCommand(&sdram_init_handler, &sdram_comd_handler, 0x1000);     /* 预充电所有单元 */
