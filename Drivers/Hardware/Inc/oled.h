@@ -26,6 +26,12 @@
 #define OLED_COL_MSB       0x10        /* 行高位基地址 */
 #define OLED_COL_LSB       0x00        /* 行低位基地址 */
 
+/* 枚举定义 */
+typedef enum {CMD, DAT} OLED_Type;
+typedef enum {
+    CS = GPIO_PIN_2, DC = GPIO_PIN_3, RW = GPIO_PIN_4, RD = GPIO_PIN_5, RS = GPIO_PIN_6
+} OLED_CON_Type;
+
 /* OLED初始化 */
 void oled_init(void);
 
@@ -44,11 +50,5 @@ void oled_refresh_ram(void);
 /* 变量声明 */
 extern uint8_t          oled_ram[128][8];
 extern GPIO_InitTypeDef oled_handler;
-
-/* 枚举定义 */
-typedef enum {CMD, DAT} OLED_Type;
-typedef enum {
-    CS = GPIO_PIN_2, DC = GPIO_PIN_3, RW = GPIO_PIN_4, RD = GPIO_PIN_5, RS = GPIO_PIN_6
-} OLED_CON_Type;
 
 #endif

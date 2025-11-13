@@ -22,6 +22,7 @@ SRC_C := \
   $(wildcard Core/*.c) \
   $(wildcard Drivers/STM32H7xx_HAL_Driver/Src/*.c) \
   $(wildcard Drivers/CMSIS/Device/ST/STM32H7xx/Source/*.c) \
+  $(wildcard Drivers/Hardware/Src/*.c) \
   $(wildcard Drivers/SYSTEM/Src/*.c) \
   $(wildcard Drivers/BSP/Src/*.c)
 
@@ -44,6 +45,7 @@ INCLUDES = \
   -IDrivers/CMSIS/Include \
   -IDrivers/CMSIS/Device/ST/STM32H7xx/Include \
   -IDrivers/STM32H7xx_HAL_Driver/Inc \
+  -IDrivers/Hardware/Inc \
   -IDrivers/SYSTEM/Inc \
   -IDrivers/BSP/Inc \
   -IHardware

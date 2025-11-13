@@ -1,6 +1,6 @@
 #include "oled.h"
 
-static uint8_t   oled_ram[128][8];
+uint8_t          oled_ram[128][8];
 GPIO_InitTypeDef oled_handler;
 
 void oled_init(void) {
@@ -17,16 +17,15 @@ void oled_init(void) {
     oled_handler.Pin   = OLED_INS_PIN;
     HAL_GPIO_Init(OLED_INS_PORT, &oled_handler);
 
-    OLED_CON(RS, 0);delay_ms(100);OLED_CON(RS, 1);        /* 复位时序 */
-    OLED_CON(RW, 1);OLED_CON(CS, 1);OLED_CON(DC, 1);      /* 控制总线复位 */
+    OLED_CON(RS, 0);delay_ms(100);OLED_CON(RS, 1);                      /* 复位时序 */
+    OLED_CON(RW, 1);OLED_CON(CS, 1);OLED_CON(DC, 1);OLED_CON(RD, 1);    /* 控制总线复位 */
 
     ssd1306_init();
 }
 
 void oled_write_byte(uint8_t con, OLED_Type typ) {
 
-    OLED_CON(DC, typ);
-    OLED_CON(CS, 0);OLED_CON(RW, 0);OLED_INS(con);OLED_CON(RW, 1);OLED_CON(CS, 1);OLED_CON(DC, 1);
+    OLED_CON(DC, typ);OLED_CON(CS, 0);OLED_CON(RW, 0);OLED_INS(con);OLED_CON(RW, 1);OLED_CON(CS, 1);
 }
 
 void oled_draw_dot(uint8_t x, uint8_t y, uint8_t dot) {

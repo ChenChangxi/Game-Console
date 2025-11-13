@@ -21,8 +21,8 @@
 
 /* LCD数据命令 */
 #define LCD ((LCD_STA *) LCD_BASE)
-#define LCD_BASE (uint32_t)(0x60080000 - 1<<1)
-typedef struct {uint16_t CMD;uint16_t DAT;} LCD_STA;
+#define LCD_BASE (uint32_t)(0x60080000 - (1<<1))
+typedef struct {volatile uint16_t CMD;volatile uint16_t DAT;} LCD_STA;
 
 /* LCD常用颜色 */
 #define WHITE           0xFFFF      /* 白色 */
@@ -46,8 +46,8 @@ typedef struct {uint16_t CMD;uint16_t DAT;} LCD_STA;
 #define LGRAYBLUE       0XA651      /* 浅灰蓝色(中间层颜色) */
 #define LBBLUE          0X2B12      /* 浅棕蓝色(选择条目的反色) */
 
-/* NT35510初始化 */
-void nt35510_init(void);
+/* ILI9806G初始化 */
+void ili9806g_init(void);
 
 /* LCD初始化 */
 void lcd_init(void);

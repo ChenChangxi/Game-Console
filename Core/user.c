@@ -1,4 +1,5 @@
 #include "key.h"
+#include "mpu.h"
 #include "lcd.h"
 #include "fmc.h"
 #include "tpad.h"
@@ -22,8 +23,9 @@ int main(void) {
     iic_init();
     fmc_init();
     lcd_init();
-    oled_init();
-    sdram_init();
+    // oled_init();
+    // nand_init();
+    // sdram_init();
     at24c02_init();
     ap3216c_init();
     pcf8574_init();
