@@ -17,6 +17,7 @@ int main(void) {
 
     HAL_Init();
     sys_stm32_clock_init(5, 192, 2, 4);
+    memory_protect();
     delay_init(480);
     led_init();
     key_init();
@@ -46,6 +47,9 @@ int main(void) {
     if (__HAL_RCC_GET_FLAG(RCC_FLAG_PORRST))   usart_transmit(stat_reset, strlen(stat_reset));
     if (__HAL_RCC_GET_FLAG(RCC_FLAG_PINRST))   usart_transmit(exte_reset, strlen(exte_reset));
     __HAL_RCC_CLEAR_RESET_FLAGS();                                /* 清标志（会积累）*/
+
+    for (uint16_t i=0;i<800;++i) for (uint16_t j=0;j<480;++j) lcd_draw_dot(j, i, RED);
+    uint16_t color = lcd_show_dot(0, 0);if (color == RED) usart_transmit("YES\r\n", strlen("YES\r\n"));
 
     while (1) {
 
