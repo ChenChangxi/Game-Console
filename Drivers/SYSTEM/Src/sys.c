@@ -20,14 +20,14 @@ void sys_stm32_clock_init(uint32_t pllm, uint32_t plln, uint32_t pllp, uint32_t 
     osc_init.LSEState   = RCC_LSE_ON;                 /* RTC时钟源 */
     osc_init.LSIState   = RCC_LSI_ON;                 /* IWDG时钟源 */
     osc_init.CSIState   = RCC_CSI_OFF;
-    osc_init.PLL.PLLState  = RCC_PLL_ON;
-    osc_init.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+    osc_init.PLL.PLLSource = RCC_PLLSOURCE_HSE;       /* PLL1,2,3时钟源 */
+    osc_init.PLL.PLLState  = RCC_PLL_ON;              /* PLL1开启 */
     osc_init.PLL.PLLM      = pllm;
     osc_init.PLL.PLLN      = plln;
     osc_init.PLL.PLLP      = pllp;
     osc_init.PLL.PLLQ      = pllq;
-    osc_init.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;         /* 压控振荡器（n倍频后）*/
-    osc_init.PLL.PLLRGE    = RCC_PLL1VCIRANGE_2;      /* PLL输入频率 */
+    osc_init.PLL.PLLRGE    = RCC_PLL1VCIRANGE_2;      /* VCO输入端范围 */
+    osc_init.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;         /* VCO输出端范围 */
     osc_init.PLL.PLLFRACN  = 0;                       /* 小数部分 */
     HAL_RCC_OscConfig(&osc_init);
 
@@ -47,7 +47,14 @@ void sys_stm32_clock_init(uint32_t pllm, uint32_t plln, uint32_t pllp, uint32_t 
     HAL_RCC_ClockConfig(&clk_init, FLASH_LATENCY_4);  /* 由电压和AHB频率决定 */
 
     per_init.PeriphClockSelection      = RCC_PERIPHCLK_USART16
-                                       | RCC_PERIPHCLK_USART234578;                          
+                                       | RCC_PERIPHCLK_USART234578
+                                       | RCC_PERIPHCLK_LTDC;
+    per_init.PLL3.PLL3M                = 
+    per_init.PLL3.PLL3N                = 
+    per_init.PLL3.PLL3R                =              /* RGB-LCD像素时钟 */
+    per_init.PLL3.PLL3RGE              = RCC_PLL3VCIRANGE_2;
+    per_init.PLL3.PLL3VCOSEL           = RCC_PLL3VCOWIDE;
+    per_init.PLL3.PLL3FRACN            = 0;
     per_init.Usart16ClockSelection     = RCC_USART16CLKSOURCE_D2PCLK2;       /* 16挂载在APB2总线，共用一个选择器 */
     per_init.Usart234578ClockSelection = RCC_USART234578CLKSOURCE_D2PCLK1;   /* 234578挂载在APB1总线 ，共用一个选择器 */
     HAL_RCCEx_PeriphCLKConfig(&per_init);

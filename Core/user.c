@@ -2,6 +2,8 @@
 #include "mpu.h"
 #include "lcd.h"
 #include "fmc.h"
+#include "rgb.h"
+#include "dma.h"
 #include "tpad.h"
 #include "oled.h"
 #include "timer.h"
@@ -19,11 +21,13 @@ int main(void) {
     sys_stm32_clock_init(5, 192, 2, 4);
     memory_protect();
     delay_init(480);
+    dma_init();
     led_init();
     key_init();
     iic_init();
     fmc_init();
     lcd_init();
+    rgb_init();
     // oled_init();
     // nand_init();
     // sdram_init();

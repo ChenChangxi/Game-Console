@@ -1,5 +1,6 @@
 #include "key.h"
 #include "lcd.h"
+#include "rgb.h"
 #include "tpad.h"
 #include "timer.h"
 #include "nand.h"
@@ -226,4 +227,43 @@ void HAL_NAND_MspInit(NAND_HandleTypeDef *hnand) {
     nand_gpio_handler.Pin       = NAND_NWA_PIN;
     nand_gpio_handler.Mode      = GPIO_MODE_INPUT;      /* 低电平有效 */
     HAL_GPIO_Init(NAND_NWA_PORT, &nand_gpio_handler);
+}
+
+void HAL_LTDC_MspInit(LTDC_HandleTypeDef *hltdc) {
+
+    GPIO_InitTypeDef ltdc_gpio_handler = {0};
+
+    RGB_CLK_ENABLE();
+    RGB_DAE_CLK_ENABLE();
+    RGB_VSN_CLK_ENABLE();
+    RGB_HSN_CLK_ENABLE();
+    RGB_CLK_CLK_ENABLE();
+    RGB_RED_CLK_ENABLE();
+    RGB_GEN_CLK_ENABLE();
+    RGB_BUE_CLK_ENABLE();
+
+    ltdc_gpio_handler.Pin       = RGB_DAE_PIN;
+    ltdc_gpio_handler.Mode      = GPIO_MODE_AF_PP;
+    ltdc_gpio_handler.Alternate = RGB_AF;
+    ltdc_gpio_handler.Pull      = GPIO_PULLUP;
+    ltdc_gpio_handler.Speed     = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(RGB_DAE_PORT, &ltdc_gpio_handler);
+
+    ltdc_gpio_handler.Pin       = RGB_HSN_PIN;
+    HAL_GPIO_Init(RGB_HSN_PORT, &ltdc_gpio_handler);
+
+    ltdc_gpio_handler.Pin       = RGB_VSN_PIN;
+    HAL_GPIO_Init(RGB_VSN_PORT, &ltdc_gpio_handler);
+
+    ltdc_gpio_handler.Pin       = RGB_CLK_PIN;
+    HAL_GPIO_Init(RGB_CLK_PORT, &ltdc_gpio_handler);
+
+    ltdc_gpio_handler.Pin       = RGB_RED_PIN;
+    HAL_GPIO_Init(RGB_RED_PORT, &ltdc_gpio_handler);
+
+    ltdc_gpio_handler.Pin       = RGB_BUE_PIN;
+    HAL_GPIO_Init(RGB_BUE_PORT, &ltdc_gpio_handler);
+
+    ltdc_gpio_handler.Pin       = RGB_GEN_PIN;
+    HAL_GPIO_Init(RGB_GEN_PORT, &ltdc_gpio_handler);
 }
