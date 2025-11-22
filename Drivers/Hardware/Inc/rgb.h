@@ -47,7 +47,8 @@ void rgb_draw_dot(uint16_t x, uint16_t y, uint16_t dot);
 uint16_t rgb_show_dot(uint16_t x, uint16_t y);
 
 /* 变量声明 */
-extern LTDC_HandleTypeDef rgb_init_handler;
+extern uint16_t             rgb_ram[180][260] __attribute__((section(".sdram")));
+extern LTDC_HandleTypeDef   rgb_init_handler;
 extern LTDC_LayerCfgTypeDef rgb_layer_handler;
 
 #endif

@@ -49,9 +49,9 @@ void sys_stm32_clock_init(uint32_t pllm, uint32_t plln, uint32_t pllp, uint32_t 
     per_init.PeriphClockSelection      = RCC_PERIPHCLK_USART16
                                        | RCC_PERIPHCLK_USART234578
                                        | RCC_PERIPHCLK_LTDC;
-    per_init.PLL3.PLL3M                = 
-    per_init.PLL3.PLL3N                = 
-    per_init.PLL3.PLL3R                =              /* RGB-LCD像素时钟 */
+    per_init.PLL3.PLL3M                = 25;
+    per_init.PLL3.PLL3N                = 33;
+    per_init.PLL3.PLL3R                = 1;           /* RGB-LCD像素时钟 */
     per_init.PLL3.PLL3RGE              = RCC_PLL3VCIRANGE_2;
     per_init.PLL3.PLL3VCOSEL           = RCC_PLL3VCOWIDE;
     per_init.PLL3.PLL3FRACN            = 0;

@@ -14,6 +14,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
         GPIO_InitTypeDef gpio_handler = {0};
 
         USART_CLK_ENABLE();
+        USART_DMA_CLK_ENABLE();
         USART_GPIO_CLK_ENABLE();
 
         gpio_handler.Pin       = USART_GPIO_PIN;
@@ -23,10 +24,24 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
         gpio_handler.Speed     = GPIO_SPEED_FREQ_HIGH;
         HAL_GPIO_Init(USART_GPIO_PORT, &gpio_handler);
 
-#if USART_EN_RX
+        uart_dma_handler.Instance                 = USART_DMA_STREAM;
+        uart_dma_handler.Init.Request             = USART_DMA_REQUEST;
+        uart_dma_handler.Init.Priority            = DMA_PRIORITY_HIGH;
+        uart_dma_handler.Init.Mode                = DMA_NORMAL;
+        uart_dma_handler.Init.Direction           = DMA_MEMORY_TO_PERIPH;
+        uart_dma_handler.Init.PeriphInc           = DMA_PINC_DISABLE;
+        uart_dma_handler.Init.MemInc              = DMA_MINC_ENABLE;
+        uart_dma_handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+        uart_dma_handler.Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
+        uart_dma_handler.Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
+        uart_dma_handler.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
+        uart_dma_handler.Init.PeriphBurst         = DMA_PBURST_SINGLE;
+        uart_dma_handler.Init.MemBurst            = DMA_MBURST_SINGLE;
+        HAL_DMA_Init(&uart_dma_handler);
+        __HAL_LINKDMA(&uart_handler, hdmatx, uart_dma_handler);
+
         HAL_NVIC_SetPriority(USART_IRQn, 3, 3);
         HAL_NVIC_EnableIRQ(USART_IRQn);
-#endif
     }
 }
 

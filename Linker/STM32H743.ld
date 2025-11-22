@@ -7,6 +7,7 @@ MEMORY
   FLASH   (rx)  : ORIGIN = 0x08000000, LENGTH = 2048K   /* 主 Flash 2 MB */
   DTCM    (rwx) : ORIGIN = 0x20000000, LENGTH = 128K    /* DTCM */
   RAM_D1  (rwx) : ORIGIN = 0x24000000, LENGTH = 512K    /* D1 域 RAM */
+  SDRAM   (rwx) : ORIGIN = 0xC0000000, LENGTH = 32M     /* SDRAM */
 }
 
 /* -------------------------- 常量区 -------------------------- */
@@ -18,7 +19,7 @@ _Min_Stack_Size = 0x00010000;    /* 64 KB 栈 */
 SECTIONS
 {
   /* -------------------------- 1. 代码 / 只读数据 -------------------------- */
-  .text :
+  .text:
   {
     KEEP(*(.isr_vector))                          /* 中断向量表 */
     *(.text*) *(.rodata*) *(.glue_7) *(.glue_7t)
@@ -39,7 +40,7 @@ SECTIONS
   } > RAM_D1
 
   /* -------------------------- 3. 未初始化的全局变量 (.bss) -------------------------- */
-  .bss (NOLOAD) :
+  .bss (NOLOAD):
   {
     _sbss = .;
     *(.bss*) *(COMMON)
@@ -61,10 +62,16 @@ SECTIONS
   PROVIDE(end  = _sheap);
 
   /* -------------------------- 5. 用户栈空间 -------------------------- */
-  ._user_stack (NOLOAD):
+  .stack (NOLOAD):
   {
     . = ALIGN(8);
     . += _Min_Stack_Size;
     _estack = .;              /* 栈起始地址 */
   } > DTCM
+
+  /* -------------------------- 6. SDRAM -------------------------- */
+  .sdram (NOLOAD):
+  {
+    *(.sdram)
+  } > SDRAM
 }

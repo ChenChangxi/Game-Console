@@ -1,10 +1,9 @@
 #include "usart.h"
 
 UART_HandleTypeDef uart_handler;
-#if USART_EN_RX
+DMA_HandleTypeDef  uart_dma_handler;
 uint16_t           uart_stat;
 uint8_t            buff;
-#endif
 uint8_t            data[USART_DATA_SIZE];
 
 void usart_init(uint32_t baud) {
@@ -25,8 +24,8 @@ void usart_init(uint32_t baud) {
 
 void usart_transmit(uint8_t *tran, uint16_t size) {
 
-    HAL_UART_Transmit(&uart_handler, tran, size, 1000);
-    while (__HAL_UART_GET_FLAG(&uart_handler, UART_FLAG_TC) != SET);
+    HAL_UART_Transmit_DMA(&uart_handler, tran, size);                 /* 发送DMA请求 */
+    while (!__HAL_DMA_GET_FLAG(&uart_dma_handler, DMA_FLAG_TCIF0_4)); /* 阻塞方式获取DMA中断标志位 */
 }
 
 void USART_IRQHandler(void) {

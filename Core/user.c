@@ -3,7 +3,6 @@
 #include "lcd.h"
 #include "fmc.h"
 #include "rgb.h"
-#include "dma.h"
 #include "tpad.h"
 #include "oled.h"
 #include "timer.h"
