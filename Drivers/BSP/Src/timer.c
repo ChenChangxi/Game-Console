@@ -67,7 +67,7 @@ void comp_time_init(uint16_t div, uint16_t cou, uint16_t dea) {
     bln_time_handler.Init.ClockDivision     = TIM_CLOCKDIVISION_DIV4;        /* 死区滤波采样时钟分频 */
     HAL_TIM_OC_Init(&bln_time_handler);
 
-    bln_clk_handler.InputTrigger     = TIM_TS_ITR2;                          /* 时钟源为TIM4 */
+    bln_clk_handler.InputTrigger     = TIM_TS_ITR2;                          /* 时钟源为TIM3 */
     bln_clk_handler.SlaveMode        = TIM_SLAVEMODE_EXTERNAL1;              /* 外部时钟模式1 */
     HAL_TIM_SlaveConfigSynchro(&bln_time_handler, &bln_clk_handler);
 
@@ -139,8 +139,12 @@ void LED_BLN_UP_IRQHandler(void) {
     HAL_TIM_IRQHandler(&led_time_handler);HAL_TIM_IRQHandler(&bln_time_handler);
 }
 
-void BLN_TIME_CC_IRQHandler(void) {HAL_TIM_IRQHandler(&bln_time_handler);}
+void LED_DAC_IRQHandler(void) {HAL_TIM_IRQHandler(&led_time_handler);}
 
-void WDG_XXX_TRG_COM_IRQHandler(void) {HAL_TIM_IRQHandler(&wdg_time_handler);}
+void WDG_TIME_IRQHandler(void) {HAL_TIM_IRQHandler(&wdg_time_handler);}
+
+void BLN_TIME_UP_IRQHandler(void) {HAL_TIM_IRQHandler(&bln_time_handler);}
+
+void BLN_TIME_CC_IRQHandler(void) {HAL_TIM_IRQHandler(&bln_time_handler);}
 
 void KIC_TIME_IRQHandler(void) {HAL_TIM_IRQHandler(&kic_time_handler);}

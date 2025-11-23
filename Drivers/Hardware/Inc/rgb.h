@@ -7,7 +7,7 @@
 
 /* LTDC外设 */
 #define RGB_AF                GPIO_AF14_LTDC
-#define RGB_MODE              0
+#define RGB_MODE              0   /* 0为横屏，1为竖屏 */
 #define RGB_CLK_ENABLE()      do {__HAL_RCC_LTDC_CLK_ENABLE();} while (0)
 
 /* LTDC命令引脚 */

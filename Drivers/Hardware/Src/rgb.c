@@ -32,7 +32,7 @@ void rgb_init(void) {
     rgb_layer_handler.Alpha           = 0x0f;                      /* 恒定Alpha */
     rgb_layer_handler.BlendingFactor1 = LTDC_BLENDING_FACTOR1_CA;  /* 层混合系数1 */
     rgb_layer_handler.BlendingFactor2 = LTDC_BLENDING_FACTOR2_CA;  /* 层混合系数2 */
-    rgb_layer_handler.FBStartAdress   = &rgb_ram;                  /* 显存起始地址 */
+    rgb_layer_handler.FBStartAdress   = (uint32_t)rgb_ram;         /* 显存起始地址 */
     rgb_layer_handler.ImageWidth      = 260;                       /* 显存行长 */
     rgb_layer_handler.ImageHeight     = 180;                       /* 显存列长 */
     rgb_layer_handler.Alpha0          = 0x0f;                      /* 默认Alpha */
@@ -44,10 +44,10 @@ void rgb_init(void) {
 
 void rgb_draw_dot(uint16_t x, uint16_t y, uint16_t dot) {
 
-
+    if (RGB_MODE) rgb_ram[479 - x][y] = dot;else rgb_ram[y][x] = dot;
 }
 
 uint16_t rgb_show_dot(uint16_t x, uint16_t y) {
 
-    
+    if (RGB_MODE) return rgb_ram[479 - x][y];else return rgb_ram[y][x];
 }

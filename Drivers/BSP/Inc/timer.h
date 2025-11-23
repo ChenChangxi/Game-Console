@@ -9,39 +9,39 @@
 #include "wdg.h"
 
 /* 定时中断 */
-#define LED_TIME                    TIM13
-#define LED_TIME_IRQn               TIM8_UP_TIM13_IRQn
-#define LED_TIME_IRQHandler         TIM13_IRQHandler
-#define LED_TIME_CLK_ENABLE()       do {__HAL_RCC_TIM13_CLK_ENABLE();} while (0)
+#define LED_TIME                    TIM6
+#define LED_TIME_IRQn               TIM6_DAC_IRQn
+#define LED_TIME_IRQHandler         TIM6_IRQHandler
+#define LED_TIME_CLK_ENABLE()       do {__HAL_RCC_TIM6_CLK_ENABLE();} while (0)
 
-#define WDG_TIME                    TIM14
-#define WDG_TIME_IRQn               TIM8_TRG_COM_TIM14_IRQn
-#define WDG_TIME_IRQHandler         TIM14_IRQHandler
-#define WDG_TIME_CLK_ENABLE()       do {__HAL_RCC_TIM14_CLK_ENABLE();} while (0)
+#define WDG_TIME                    TIM7
+#define WDG_TIME_IRQn               TIM7_IRQn
+#define WDG_TIME_IRQHandler         TIM7_IRQHandler
+#define WDG_TIME_CLK_ENABLE()       do {__HAL_RCC_TIM7_CLK_ENABLE();} while (0)
 
 /* 输出比较 */
-#define BLN_TIME                    TIM8
+#define BLN_TIME                    TIM1
 #define BLN_TIME_PWM_CHANNEL        TIM_CHANNEL_3
 #define BLN_TIME_PHASEX_CHANNEL     TIM_CHANNEL_1
 #define BLN_TIME_PHASEY_CHANNEL     TIM_CHANNEL_2
-#define BLN_TIME_PHASEX_PIN         GPIO_PIN_6
-#define BLN_TIME_PHASEY_PIN         GPIO_PIN_7
-#define BLN_TIME_PHASE_PIN          GPIO_PIN_9
-#define BLN_TIME_PORT               GPIOC
+#define BLN_TIME_PHASEX_PIN         GPIO_PIN_8
+#define BLN_TIME_PHASEY_PIN         GPIO_PIN_9
+#define BLN_TIME_PHASE_PIN          GPIO_PIN_7
+#define BLN_TIME_PORT               GPIOA
 #define BLC_TIME_PORT               GPIOB         /* 互补通道 */
-#define BLB_TIME_PORT               GPIOI         /* 刹车断路 */
-#define BLN_TIME_PIN                GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8
-#define BLC_TIME_PIN                GPIO_PIN_15
-#define BLB_TIME_PIN                GPIO_PIN_4
-#define BLN_TIME_AF                 GPIO_AF3_TIM8
-#define BLN_TIME_UP_IRQn            TIM8_UP_TIM13_IRQn
-#define BLN_TIME_CC_IRQn            TIM8_CC_IRQn
-#define BLN_TIME_UP_IRQHandler      TIM8_UP_IRQHandler
-#define BLN_TIME_CC_IRQHandler      TIM8_CC_IRQHandler
-#define BLN_GPIO_CLK_ENABLE()       do {__HAL_RCC_GPIOC_CLK_ENABLE();} while (0)
+#define BLB_TIME_PORT               GPIOA         /* 刹车断路 */
+#define BLN_TIME_PIN                GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10
+#define BLC_TIME_PIN                GPIO_PIN_1
+#define BLB_TIME_PIN                GPIO_PIN_6
+#define BLN_TIME_AF                 GPIO_AF1_TIM1
+#define BLN_TIME_UP_IRQn            TIM1_UP_IRQn
+#define BLN_TIME_CC_IRQn            TIM1_CC_IRQn
+#define BLN_TIME_UP_IRQHandler      TIM1_UP_IRQHandler
+#define BLN_TIME_CC_IRQHandler      TIM1_CC_IRQHandler
+#define BLN_GPIO_CLK_ENABLE()       do {__HAL_RCC_GPIOA_CLK_ENABLE();} while (0)
 #define BLC_GPIO_CLK_ENABLE()       do {__HAL_RCC_GPIOB_CLK_ENABLE();} while (0)
-#define BLB_GPIO_CLK_ENABLE()       do {__HAL_RCC_GPIOI_CLK_ENABLE();} while (0)
-#define BLN_TIME_CLK_ENABLE()       do {__HAL_RCC_TIM8_CLK_ENABLE();}  while (0)
+#define BLB_GPIO_CLK_ENABLE()       do {__HAL_RCC_GPIOA_CLK_ENABLE();} while (0)
+#define BLN_TIME_CLK_ENABLE()       do {__HAL_RCC_TIM1_CLK_ENABLE();}  while (0)
 
 /* 输入捕获 */
 #define KIC_TIME                    TIM5
@@ -56,20 +56,16 @@
 #define KIC_TIME_CLK_ENABLE()       do {__HAL_RCC_TIM5_CLK_ENABLE();}  while (0)
 
 /* 主定时器 */
-#define MST_TIME                    TIM4
-#define MST_TIME_PORT               GPIOE
-#define MST_TIME_PIN                GPIO_PIN_0
-#define MST_TIME_AF                 GPIO_AF2_TIM4
-#define MST_GPIO_CLK_ENABLE()       do {__HAL_RCC_GPIOE_CLK_ENABLE();} while (0)
-#define MST_TIME_CLK_ENABLE()       do {__HAL_RCC_TIM4_CLK_ENABLE();}  while (0)
+#define MST_TIME                    TIM3
+#define MST_TIME_PORT               GPIOD
+#define MST_TIME_PIN                GPIO_PIN_2
+#define MST_TIME_AF                 GPIO_AF2_TIM3
+#define MST_GPIO_CLK_ENABLE()       do {__HAL_RCC_GPIOD_CLK_ENABLE();} while (0)
+#define MST_TIME_CLK_ENABLE()       do {__HAL_RCC_TIM3_CLK_ENABLE();}  while (0)
 
 /* 共享中断服务函数 */
-#define TIM13_IRQHandler            LED_BLN_UP_IRQHandler
-#define TIM14_IRQHandler            WDG_XXX_TRG_COM_IRQHandler
-#define TIM8_UP_IRQHandler          LED_BLN_UP_IRQHandler
-
-#define LED_BLN_UP_IRQHandler       TIM8_UP_TIM13_IRQHandler
-#define WDG_XXX_TRG_COM_IRQHandler  TIM8_TRG_COM_TIM14_IRQHandler
+#define TIM6_IRQHandler             LED_DAC_IRQHandler
+#define LED_DAC_IRQHandler          TIM6_DAC_IRQHandler
 
 /* 0~1000折返 */
 uint16_t get_pers(uint16_t per, uint16_t *cou);
