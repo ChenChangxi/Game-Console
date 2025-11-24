@@ -65,10 +65,9 @@ int main(void) {
 
         if (time_stat & 0x8000) {
             
-            uint8_t  time_data[KIC_TIME_DATA_SIZE] = {0};
             uint32_t time_tota = (time_stat & 0x3fff) * 65536 + time_coun;
-            snprintf(time_data, 11 + get_digs(time_tota) + 1, "按下:%uus\r\n", time_tota);   /* size需包含\0 */
-            usart_transmit(time_data, 11 + get_digs(time_tota));time_stat = 0;
+            snprintf(data, 11 + get_digs(time_tota) + 1, "按下:%uus\r\n", time_tota);   /* size需包含\0 */
+            usart_transmit(data, 11 + get_digs(time_tota));time_stat = 0;
         }
         if (uart_stat & 0x8000) {
 

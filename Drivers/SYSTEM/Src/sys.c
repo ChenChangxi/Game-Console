@@ -63,3 +63,8 @@ void sys_stm32_clock_init(uint32_t pllm, uint32_t plln, uint32_t pllp, uint32_t 
 }
 
 void sys_cache_enable(void) {SCB_EnableICache();SCB_EnableDCache();}
+
+void sys_cache_sram_sync(uint32_t addr, uint32_t size) {
+
+    SCB_CleanDCache_by_Addr((uint32_t *)(addr & ~0x1f), ((addr + size + 31) & ~0x1f) - (addr & ~0x1f));
+}
