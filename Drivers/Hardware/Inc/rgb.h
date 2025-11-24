@@ -15,14 +15,17 @@
 #define RGB_HSN_PORT          GPIOI
 #define RGB_VSN_PORT          GPIOI
 #define RGB_CLK_PORT          GPIOG
+#define RGB_BLN_PORT          GPIOB
 #define RGB_DAE_PIN           GPIO_PIN_10
 #define RGB_HSN_PIN           GPIO_PIN_10
 #define RGB_VSN_PIN           GPIO_PIN_9
 #define RGB_CLK_PIN           GPIO_PIN_7
+#define RGB_BLN_PIN           GPIO_PIN_5
 #define RGB_DAE_CLK_ENABLE()  do {__HAL_RCC_GPIOF_CLK_ENABLE();} while (0)
 #define RGB_HSN_CLK_ENABLE()  do {__HAL_RCC_GPIOI_CLK_ENABLE();} while (0)
 #define RGB_VSN_CLK_ENABLE()  do {__HAL_RCC_GPIOI_CLK_ENABLE();} while (0)
 #define RGB_CLK_CLK_ENABLE()  do {__HAL_RCC_GPIOG_CLK_ENABLE();} while (0)
+#define RGB_BLN_CLK_ENABLE()  do {__HAL_RCC_GPIOB_CLK_ENABLE();} while (0)
 
 /* LTDC数据引脚 */
 #define RGB_RED_PORT          GPIOH
@@ -36,6 +39,10 @@
 #define RGB_RED_CLK_ENABLE()  do {__HAL_RCC_GPIOH_CLK_ENABLE();} while (0)
 #define RGB_GEN_CLK_ENABLE()  do {__HAL_RCC_GPIOI_CLK_ENABLE();} while (0)
 #define RGB_BUE_CLK_ENABLE()  do {__HAL_RCC_GPIOG_CLK_ENABLE();} while (0)
+
+/* RGB背光控制 */
+#define RGB_BLN(x) \
+    do {HAL_GPIO_WritePin(RGB_BLN_PORT, RGB_BLN_PIN, x ? GPIO_PIN_SET : GPIO_PIN_RESET);} while (0)
 
 /* LTDC初始化 */
 void rgb_init(void);

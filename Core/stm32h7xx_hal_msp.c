@@ -255,6 +255,7 @@ void HAL_LTDC_MspInit(LTDC_HandleTypeDef *hltdc) {
     RGB_VSN_CLK_ENABLE();
     RGB_HSN_CLK_ENABLE();
     RGB_CLK_CLK_ENABLE();
+    RGB_BLN_CLK_ENABLE();
     RGB_RED_CLK_ENABLE();
     RGB_GEN_CLK_ENABLE();
     RGB_BUE_CLK_ENABLE();
@@ -283,4 +284,8 @@ void HAL_LTDC_MspInit(LTDC_HandleTypeDef *hltdc) {
 
     ltdc_gpio_handler.Pin       = RGB_GEN_PIN;
     HAL_GPIO_Init(RGB_GEN_PORT, &ltdc_gpio_handler);
+
+    ltdc_gpio_handler.Pin       = RGB_BLN_PIN;
+    ltdc_gpio_handler.Mode      = GPIO_MODE_OUTPUT_PP;
+    HAL_GPIO_Init(RGB_BLN_PORT, &ltdc_gpio_handler);
 }

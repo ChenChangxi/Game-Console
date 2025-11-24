@@ -47,14 +47,14 @@ void sys_stm32_clock_init(uint32_t pllm, uint32_t plln, uint32_t pllp, uint32_t 
     HAL_RCC_ClockConfig(&clk_init, FLASH_LATENCY_4);  /* 由电压和AHB频率决定 */
 
     per_init.PeriphClockSelection      = RCC_PERIPHCLK_USART16
-                                       | RCC_PERIPHCLK_USART234578;
-                                    //    | RCC_PERIPHCLK_LTDC;
-    // per_init.PLL3.PLL3M                = 25;
-    // per_init.PLL3.PLL3N                = 33;
-    // per_init.PLL3.PLL3R                = 1;           /* RGB-LCD像素时钟 */
-    // per_init.PLL3.PLL3RGE              = RCC_PLL3VCIRANGE_2;
-    // per_init.PLL3.PLL3VCOSEL           = RCC_PLL3VCOWIDE;
-    // per_init.PLL3.PLL3FRACN            = 0;
+                                       | RCC_PERIPHCLK_USART234578
+                                       | RCC_PERIPHCLK_LTDC;
+    per_init.PLL3.PLL3M                = 5;
+    per_init.PLL3.PLL3N                = 66;
+    per_init.PLL3.PLL3R                = 10;          /* RGB-LCD像素时钟 */
+    per_init.PLL3.PLL3RGE              = RCC_PLL3VCIRANGE_2;
+    per_init.PLL3.PLL3VCOSEL           = RCC_PLL3VCOWIDE;
+    per_init.PLL3.PLL3FRACN            = 0;
     per_init.Usart16ClockSelection     = RCC_USART16CLKSOURCE_D2PCLK2;       /* 16挂载在APB2总线，共用一个选择器 */
     per_init.Usart234578ClockSelection = RCC_USART234578CLKSOURCE_D2PCLK1;   /* 234578挂载在APB1总线 ，共用一个选择器 */
     HAL_RCCEx_PeriphCLKConfig(&per_init);

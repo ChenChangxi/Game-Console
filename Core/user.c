@@ -26,10 +26,10 @@ int main(void) {
     iic_init();
     fmc_init();
     lcd_init();
-    // rgb_init();
+    sdram_init();
+    rgb_init();
     // oled_init();
     // nand_init();
-    // sdram_init();
     at24c02_init();
     ap3216c_init();
     pcf8574_init();
@@ -57,9 +57,9 @@ int main(void) {
     for (uint16_t i=0;i<800;++i) for (uint16_t j=0;j<480;++j) lcd_draw_dot(j, i, RED);
     color = lcd_show_dot(0, 0);if (color == RED) usart_transmit("LCD_YES\r\n", strlen("LCD_YES\r\n"));
 
-    // /* RGB显示 */
-    // for (uint16_t i=0;i<180;++i) for (uint16_t j=0;j<260;++j) rgb_draw_dot(j, i, i >= 60 && j >= 140 ? BLUE : RED);
-    // color = rgb_show_dot(199, 119);if (color == BLUE) usart_transmit("RGB_YES\r\n", strlen("RGB_YES\r\n"));
+    /* RGB显示 */
+    for (uint16_t i=0;i<180;++i) for (uint16_t j=0;j<260;++j) rgb_draw_dot(j, i, i >= 60 && j >= 140 ? BLUE : RED);
+    color = rgb_show_dot(199, 119);if (color == BLUE) usart_transmit("RGB_YES\r\n", strlen("RGB_YES\r\n"));
 
     while (1) {
 
