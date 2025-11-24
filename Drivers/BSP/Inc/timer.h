@@ -31,7 +31,7 @@
 #define BLC_TIME_PORT               GPIOB         /* 互补通道 */
 #define BLB_TIME_PORT               GPIOA         /* 刹车断路 */
 #define BLN_TIME_PIN                GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10
-#define BLC_TIME_PIN                GPIO_PIN_1
+#define BLC_TIME_PIN                GPIO_PIN_15
 #define BLB_TIME_PIN                GPIO_PIN_6
 #define BLN_TIME_AF                 GPIO_AF1_TIM1
 #define BLN_TIME_UP_IRQn            TIM1_UP_IRQn

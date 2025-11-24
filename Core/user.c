@@ -21,26 +21,26 @@ int main(void) {
     sys_cache_enable();
     memory_protect();
     delay_init(480);
-    // led_init();
-    // key_init();
-    // iic_init();
-    // fmc_init();
-    // lcd_init();
+    led_init();
+    key_init();
+    iic_init();
+    fmc_init();
+    lcd_init();
     // rgb_init();
     // oled_init();
     // nand_init();
     // sdram_init();
-    // at24c02_init();
-    // ap3216c_init();
-    // pcf8574_init();
+    at24c02_init();
+    ap3216c_init();
+    pcf8574_init();
     usart_init(115200);
-    // iwdg_init(IWDG_PRESCALER_8, 140);
-    // wwdg_init(WWDG_PRESCALER_8, 0x7f, 0x5f);
-    // tpad_init(6 - 1);                                             /* 25ns */
-    // deay_time_init(12000 - 1, 10000 - 1, 7200 - 1, 1000 - 1);     /* 500ms,30ms */
-    // mast_time_init(1 - 1, 5 - 1);                                 /* 500ns */
-    // comp_time_init(1 - 1, 1000 - 1, 0xed);                        /* 500us,12us */
-    // capt_time_init(240 - 1, 0xffffffff - 1);                      /* 1us */
+    iwdg_init(IWDG_PRESCALER_8, 140);
+    wwdg_init(WWDG_PRESCALER_8, 0x7f, 0x5f);
+    tpad_init(6 - 1);                                             /* 25ns */
+    deay_time_init(12000 - 1, 10000 - 1, 7200 - 1, 1000 - 1);     /* 500ms,30ms */
+    mast_time_init(1 - 1, 5 - 1);                                 /* 500ns */
+    comp_time_init(1 - 1, 1000 - 1, 0xed);                        /* 500us,12us */
+    capt_time_init(240 - 1, 0xffffffff - 1);                      /* 1us */
     usart_transmit(feed_iwdg, strlen(feed_iwdg));
     usart_transmit(feed_wwdg, strlen(feed_wwdg));
 
@@ -51,11 +51,11 @@ int main(void) {
     if (__HAL_RCC_GET_FLAG(RCC_FLAG_PINRST))   usart_transmit(exte_reset, strlen(exte_reset));
     __HAL_RCC_CLEAR_RESET_FLAGS();                                /* 清标志（会积累）*/
 
-    // uint16_t color = GREEN;
+    uint16_t color = GREEN;
 
-    // /* LCD显示 */
-    // for (uint16_t i=0;i<800;++i) for (uint16_t j=0;j<480;++j) lcd_draw_dot(j, i, RED);
-    // color = lcd_show_dot(0, 0);if (color == RED) usart_transmit("LCD_YES\r\n", strlen("LCD_YES\r\n"));
+    /* LCD显示 */
+    for (uint16_t i=0;i<800;++i) for (uint16_t j=0;j<480;++j) lcd_draw_dot(j, i, RED);
+    color = lcd_show_dot(0, 0);if (color == RED) usart_transmit("LCD_YES\r\n", strlen("LCD_YES\r\n"));
 
     // /* RGB显示 */
     // for (uint16_t i=0;i<180;++i) for (uint16_t j=0;j<260;++j) rgb_draw_dot(j, i, i >= 60 && j >= 140 ? BLUE : RED);
