@@ -12,7 +12,7 @@ void sdram_init(void) {
     sdram_init_handler.Init.SDClockPeriod      = FMC_SDRAM_CLOCK_PERIOD_2;           /* 分频系数 */
     sdram_init_handler.Init.CASLatency         = FMC_SDRAM_CAS_LATENCY_3;            /* 读延后SDCLK */
     sdram_init_handler.Init.ReadBurst          = FMC_SDRAM_RBURST_ENABLE;            /* 读突发使能 */
-    sdram_init_handler.Init.ReadPipeDelay      = FMC_SDRAM_RPIPE_DELAY_0;            /* 读延后HCLK */
+    sdram_init_handler.Init.ReadPipeDelay      = FMC_SDRAM_RPIPE_DELAY_1;            /* 读延后HCLK（RGB稳定）*/
     sdram_init_handler.Init.WriteProtection    = FMC_SDRAM_WRITE_PROTECTION_DISABLE; /* 写使能 */
     sdram_init_handler.Init.MemoryDataWidth    = FMC_SDRAM_MEM_BUS_WIDTH_16;         /* 数据宽度 */
     sdram_init_handler.Init.RowBitsNumber      = FMC_SDRAM_ROW_BITS_NUM_13;          /* 行地址宽度 */
@@ -27,7 +27,9 @@ void sdram_init(void) {
     sdram_time_handler.ExitSelfRefreshDelay = 9;  /* TXSR 休眠结束到激活时间 */
 
     HAL_SDRAM_Init(&sdram_init_handler, &sdram_time_handler);w9825g6kh6_init();
-    HAL_SDRAM_ProgramRefreshRate(&sdram_init_handler, 938 - 20);  /* 行刷新速度（留裕量提前刷新）*/
+    HAL_SDRAM_ProgramRefreshRate(&sdram_init_handler, 938 - 20);   /* 行刷新速度（留裕量提前刷新）*/
+    memset((void *)0xC0000000, 0, 32 * 1024 * 1024);               /* 重置或上电后清理SDRAM */
+    sys_cache_sram_sync(0xC0000000, (uint32_t)(32 * 1024 * 1024)); /* 将DCache刷回SDRAM */
 }
 
 void w9825g6kh6_init(void) {

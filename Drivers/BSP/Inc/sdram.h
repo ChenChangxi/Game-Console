@@ -5,6 +5,7 @@
 
 #include "sys.h"
 #include "delay.h"
+#include "string.h"
 
 /* SDRAM命令引脚 */
 #define SDRAM_CAS_PORT          GPIOG           /* 行选通 */
