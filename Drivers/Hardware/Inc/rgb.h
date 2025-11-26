@@ -7,7 +7,7 @@
 
 /* LTDC外设 */
 #define RGB_AF                GPIO_AF14_LTDC
-#define RGB_MODE              0   /* 0为横屏，1为竖屏 */
+#define RGB_MODE              1   /* 0为横屏，1为竖屏 */
 #define RGB_CLK_ENABLE()      do {__HAL_RCC_LTDC_CLK_ENABLE();} while (0)
 
 /* LTDC命令引脚 */
@@ -54,7 +54,7 @@ void rgb_draw_dot(uint16_t x, uint16_t y, uint16_t dot);
 uint16_t rgb_show_dot(uint16_t x, uint16_t y);
 
 /* 变量声明 */
-extern uint16_t             rgb_ram[180][400] __attribute__((section(".sdram")));
+extern uint16_t             rgb_ram[200][120] __attribute__((section(".sdram")));
 extern LTDC_HandleTypeDef   rgb_init_handler;
 extern LTDC_LayerCfgTypeDef rgb_layer_handler;
 
