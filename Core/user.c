@@ -58,7 +58,7 @@ int main(void) {
     color = lcd_show_dot(0, 0);if (color == RED) usart_transmit("LCD_YES\r\n", strlen("LCD_YES\r\n"));
 
     /* RGB显示 */
-    for (uint16_t y=0;y<120;++y) for (uint16_t x=0;x<200;++x)
+    for (uint16_t y=0;y<RGB_WIDTH;++y) for (uint16_t x=0;x<RGB_HEIGHT;++x)
     rgb_draw_dot(x, y, x >= 10 && x < 70 && y >= 10 && y < 70 ? BLUE : RED);
     sys_cache_sram_sync((uint32_t)rgb_ram, (uint32_t)(200 * 120 * 2));
     color = rgb_show_dot(10, 10);if (color == BLUE) usart_transmit("RGB_YES\r\n", strlen("RGB_YES\r\n"));

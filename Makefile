@@ -20,8 +20,11 @@ BIN     := $(BUILD)/$(PROJECT).bin
 # 递归搜所有 .c / .s
 SRC_C := \
   $(wildcard Core/*.c) \
-  $(wildcard Drivers/STM32H7xx_HAL_Driver/Src/*.c) \
+  $(wildcard Resources/Font/Src/*.c) \
+  $(wildcard Resources/Picture/Src/*.c) \
+  $(wildcard Resources/Video/Src/*.c) \
   $(wildcard Drivers/CMSIS/Device/ST/STM32H7xx/Source/*.c) \
+  $(wildcard Drivers/STM32H7xx_HAL_Driver/Src/*.c) \
   $(wildcard Drivers/Hardware/Src/*.c) \
   $(wildcard Drivers/SYSTEM/Src/*.c) \
   $(wildcard Drivers/BSP/Src/*.c)
@@ -42,13 +45,15 @@ OBJS    := $(OBJ_C) $(OBJ_S)
 # 头文件搜索路径
 INCLUDES = \
   -ICore \
+  -IResources/Font/Inc \
+  -IResources/Picture/Inc \
+  -IResources/Video/Inc \
   -IDrivers/CMSIS/Include \
   -IDrivers/CMSIS/Device/ST/STM32H7xx/Include \
   -IDrivers/STM32H7xx_HAL_Driver/Inc \
   -IDrivers/Hardware/Inc \
   -IDrivers/SYSTEM/Inc \
-  -IDrivers/BSP/Inc \
-  -IHardware
+  -IDrivers/BSP/Inc
 
 # 全局宏
 DEFINES = -DSTM32H743xx -DUSE_HAL_DRIVER

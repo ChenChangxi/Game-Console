@@ -1,6 +1,7 @@
 #include "rgb.h"
 
-uint16_t             rgb_ram[200][120] __attribute__((section(".sdram")));
+uint32_t             addr, size, offs;
+uint16_t             rgb_ram[RGB_HEIGHT][RGB_WIDTH] __attribute__((section(".sdram")));
 LTDC_HandleTypeDef   rgb_init_handler;
 LTDC_LayerCfgTypeDef rgb_layer_handler;
 
@@ -25,16 +26,16 @@ void rgb_init(void) {
     HAL_LTDC_Init(&rgb_init_handler);
 
     rgb_layer_handler.WindowX0        = 340;                          /* 窗口左边界 */
-    rgb_layer_handler.WindowX1        = 340 + 120;                    /* 窗口右边界（开区间）*/
+    rgb_layer_handler.WindowX1        = 340 + RGB_WIDTH;              /* 窗口右边界（开区间）*/
     rgb_layer_handler.WindowY0        = 140;                          /* 窗口上边界 */
-    rgb_layer_handler.WindowY1        = 140 + 200;                    /* 窗口下边界（开区间）*/
+    rgb_layer_handler.WindowY1        = 140 + RGB_HEIGHT;             /* 窗口下边界（开区间）*/
     rgb_layer_handler.PixelFormat     = LTDC_PIXEL_FORMAT_RGB565;     /* 像素格式 */
     rgb_layer_handler.Alpha           = 0xff;                         /* 恒定Alpha */
     rgb_layer_handler.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;  /* 层混合系数1 */
     rgb_layer_handler.BlendingFactor2 = LTDC_BLENDING_FACTOR2_PAxCA;  /* 层混合系数2 */
     rgb_layer_handler.FBStartAdress   = (uint32_t)rgb_ram;            /* 显存起始地址 */
-    rgb_layer_handler.ImageWidth      = 120;                          /* 显存行长 */
-    rgb_layer_handler.ImageHeight     = 200;                          /* 显存列长 */
+    rgb_layer_handler.ImageWidth      = RGB_WIDTH;                    /* 显存行长 */
+    rgb_layer_handler.ImageHeight     = RGB_HEIGHT;                   /* 显存列长 */
     rgb_layer_handler.Alpha0          = 0x00;                         /* 默认Alpha */
     rgb_layer_handler.Backcolor.Red   = 0;                            /* 默认层色 */
     rgb_layer_handler.Backcolor.Green = 0;                            /* RGB888 */
@@ -44,10 +45,58 @@ void rgb_init(void) {
 
 void rgb_draw_dot(uint16_t x, uint16_t y, uint16_t dot) {
 
-    if (RGB_MODE) rgb_ram[199 - x][y] = dot;else rgb_ram[y][x] = dot;
+    if (RGB_MODE) rgb_ram[RGB_HEIGHT - 1 - x][y] = dot;else rgb_ram[y][x] = dot;
 }
 
 uint16_t rgb_show_dot(uint16_t x, uint16_t y) {
 
-    if (RGB_MODE) return rgb_ram[199 - x][y];else return rgb_ram[y][x];
+    if (RGB_MODE) return rgb_ram[RGB_HEIGHT - 1 - x][y];else return rgb_ram[y][x];
+}
+
+void rgb_reco_area(uint16_t xs, uint16_t xe, uint16_t ys, uint16_t ye) {
+
+    if (RGB_MODE) {
+
+        addr = (uint32_t)rgb_ram[RGB_HEIGHT - 1 - xe] + 2 * ys; 
+        size = ((ye - ys + 1)<<16) | (xe - xs + 1);
+        offs = 120 - (ye - ys + 1);
+
+    } else {
+
+        addr = (uint32_t)rgb_ram[ys] + 2 * xs;
+        size = ((xe - xs + 1)<<16) | (ye - ys + 1);
+        offs = 120 - (xe - xs + 1);
+    }
+}
+
+void rgb_draw_area(uint16_t xs, uint16_t xe, uint16_t ys, uint16_t ye, uint16_t area) {
+    
+    rgb_reco_area(xs, xe, ys, ye);
+    DMA2D -> CR     &= ~DMA2D_CR_START;       /* 停止DMA2D */
+    DMA2D -> CR     = DMA2D_R2M;              /* 寄存器到存储器 */
+    DMA2D -> OCOLR  = (uint32_t)area;         /* 输出颜色 */
+    DMA2D -> OPFCCR = DMA2D_OUTPUT_RGB565;    /* 输出颜色格式 */
+    DMA2D -> OMAR   = addr;                   /* 输出地址 */
+    DMA2D -> NLR    = size;                   /* 大小 */
+    DMA2D -> OOR    = offs;                   /* 输出偏移 */
+    DMA2D -> CR     |= DMA2D_CR_START;        /* 开启DMA2D */
+    while (!(DMA2D -> ISR & DMA2D_FLAG_TC));  /* 等待传输完成 */
+    DMA2D -> IFCR   |= DMA2D_FLAG_TC;         /* 清中断标志位 */
+}
+
+void rgb_draw_picture(uint16_t xs, uint16_t xe, uint16_t ys, uint16_t ye, uint16_t *picture) {
+
+    rgb_reco_area(xs, xe, ys, ye);
+    DMA2D -> CR      &= ~DMA2D_CR_START;      /* 停止DMA2D */
+    DMA2D -> CR      = DMA2D_M2M;             /* 存储器到存储器 */
+    DMA2D -> FGPFCCR = DMA2D_INPUT_RGB565;    /* 输入颜色格式（前景层）*/
+    DMA2D -> OPFCCR  = DMA2D_OUTPUT_RGB565;   /* 输出颜色格式 */
+    DMA2D -> FGMAR   = (uint32_t)picture;     /* 输入地址（前景层）*/
+    DMA2D -> OMAR    = addr;                  /* 输出地址 */
+    DMA2D -> NLR     = size;                  /* 大小 */
+    DMA2D -> FGOR    = 0;                     /* 输入偏移（前景层）*/
+    DMA2D -> OOR     = offs;                  /* 输出偏移 */
+    DMA2D -> CR      |= DMA2D_CR_START;       /* 开启DMA2D */
+    while (!(DMA2D -> ISR & DMA2D_FLAG_TC));  /* 等待传输完成 */
+    DMA2D -> IFCR    |= DMA2D_FLAG_TC;        /* 清中断标志位 */
 }

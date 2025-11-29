@@ -8,7 +8,10 @@
 /* LTDC外设 */
 #define RGB_AF                GPIO_AF14_LTDC
 #define RGB_MODE              1   /* 0为横屏，1为竖屏 */
+#define RGB_WIDTH             120
+#define RGB_HEIGHT            200
 #define RGB_CLK_ENABLE()      do {__HAL_RCC_LTDC_CLK_ENABLE();} while (0)
+#define RGB_DMA_CLK_ENABLE()  do {__HAL_RCC_DMA2D_CLK_ENABLE();} while (0)
 
 /* LTDC命令引脚 */
 #define RGB_DAE_PORT          GPIOF
@@ -53,8 +56,18 @@ void rgb_draw_dot(uint16_t x, uint16_t y, uint16_t dot);
 /* 屏幕读点 */
 uint16_t rgb_show_dot(uint16_t x, uint16_t y);
 
+/* 屏幕区域 */
+void rgb_reco_area(uint16_t xs, uint16_t xe, uint16_t ys, uint16_t ye);
+
+/* 屏幕填充（DMA2D由R到M）*/
+void rgb_draw_area(uint16_t xs, uint16_t xe, uint16_t ys, uint16_t ye, uint16_t area);
+
+/* 屏幕画图（DMA2D由M到M）*/
+void rgb_draw_picture(uint16_t xs, uint16_t xe, uint16_t ys, uint16_t ye, uint16_t *picture);
+
 /* 变量声明 */
-extern uint16_t             rgb_ram[200][120] __attribute__((section(".sdram")));
+extern uint32_t             addr, size, offs;
+extern uint16_t             rgb_ram[RGB_HEIGHT][RGB_WIDTH] __attribute__((section(".sdram")));
 extern LTDC_HandleTypeDef   rgb_init_handler;
 extern LTDC_LayerCfgTypeDef rgb_layer_handler;
 
