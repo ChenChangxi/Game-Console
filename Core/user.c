@@ -10,6 +10,7 @@
 #include "stdio.h"
 #include "sdram.h"
 #include "string.h"
+#include "picture.h"
 #include "at24c02.h"
 #include "ap3216c.h"
 #include "pcf8574.h"
@@ -58,10 +59,12 @@ int main(void) {
     color = lcd_show_dot(0, 0);if (color == RED) usart_transmit("LCD_YES\r\n", strlen("LCD_YES\r\n"));
 
     /* RGB显示 */
-    for (uint16_t y=0;y<RGB_WIDTH;++y) for (uint16_t x=0;x<RGB_HEIGHT;++x)
-    rgb_draw_dot(x, y, x >= 10 && x < 70 && y >= 10 && y < 70 ? BLUE : RED);
-    sys_cache_sram_sync((uint32_t)rgb_ram, (uint32_t)(200 * 120 * 2));
-    color = rgb_show_dot(10, 10);if (color == BLUE) usart_transmit("RGB_YES\r\n", strlen("RGB_YES\r\n"));
+    for (uint16_t y=0;y<RGB_WIDTH;++y) for (uint16_t x=0;x<RGB_HEIGHT;++x) rgb_draw_dot(x, y, RED);
+    sys_cache_sram_sync((uint32_t)rgb_ram, (uint32_t)(RGB_HEIGHT * RGB_WIDTH * 2));
+    rgb_draw_area(350, 350 + 40 - 1, 10, 10 + 40 - 1, BLUE);      /* 闭区间 */
+    rgb_draw_picture(8, 8 + 384 - 1, 176, 176 + 216 - 1, (uint32_t)Link38490);
+    rgb_draw_picture(10, 10 + 150 - 1, 10, 10 + 150 - 1, (uint32_t)Lufei15090);
+    color = rgb_show_dot(389, 10);if (color == BLUE) usart_transmit("RGB_YES\r\n", strlen("RGB_YES\r\n"));
 
     while (1) {
 

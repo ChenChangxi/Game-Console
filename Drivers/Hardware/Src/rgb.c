@@ -25,10 +25,10 @@ void rgb_init(void) {
     rgb_init_handler.Init.Backcolor.Blue     = 0;                       /* 0x00ff00 */
     HAL_LTDC_Init(&rgb_init_handler);
 
-    rgb_layer_handler.WindowX0        = 340;                          /* 窗口左边界 */
-    rgb_layer_handler.WindowX1        = 340 + RGB_WIDTH;              /* 窗口右边界（开区间）*/
-    rgb_layer_handler.WindowY0        = 140;                          /* 窗口上边界 */
-    rgb_layer_handler.WindowY1        = 140 + RGB_HEIGHT;             /* 窗口下边界（开区间）*/
+    rgb_layer_handler.WindowX0        = RGB_WINDOW_XS;                /* 窗口左边界 */
+    rgb_layer_handler.WindowX1        = RGB_WINDOW_XE;                /* 窗口右边界（开区间）*/
+    rgb_layer_handler.WindowY0        = RGB_WINDOW_YS;                /* 窗口上边界 */
+    rgb_layer_handler.WindowY1        = RGB_WINDOW_YE;                /* 窗口下边界（开区间）*/
     rgb_layer_handler.PixelFormat     = LTDC_PIXEL_FORMAT_RGB565;     /* 像素格式 */
     rgb_layer_handler.Alpha           = 0xff;                         /* 恒定Alpha */
     rgb_layer_handler.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;  /* 层混合系数1 */
@@ -59,18 +59,18 @@ void rgb_reco_area(uint16_t xs, uint16_t xe, uint16_t ys, uint16_t ye) {
 
         addr = (uint32_t)rgb_ram[RGB_HEIGHT - 1 - xe] + 2 * ys; 
         size = ((ye - ys + 1)<<16) | (xe - xs + 1);
-        offs = 120 - (ye - ys + 1);
+        offs = RGB_WIDTH - (ye - ys + 1);
 
     } else {
 
         addr = (uint32_t)rgb_ram[ys] + 2 * xs;
         size = ((xe - xs + 1)<<16) | (ye - ys + 1);
-        offs = 120 - (xe - xs + 1);
+        offs = RGB_WIDTH - (xe - xs + 1);
     }
 }
 
 void rgb_draw_area(uint16_t xs, uint16_t xe, uint16_t ys, uint16_t ye, uint16_t area) {
-    
+
     rgb_reco_area(xs, xe, ys, ye);
     DMA2D -> CR     &= ~DMA2D_CR_START;       /* 停止DMA2D */
     DMA2D -> CR     = DMA2D_R2M;              /* 寄存器到存储器 */
@@ -84,14 +84,14 @@ void rgb_draw_area(uint16_t xs, uint16_t xe, uint16_t ys, uint16_t ye, uint16_t 
     DMA2D -> IFCR   |= DMA2D_FLAG_TC;         /* 清中断标志位 */
 }
 
-void rgb_draw_picture(uint16_t xs, uint16_t xe, uint16_t ys, uint16_t ye, uint16_t *picture) {
+void rgb_draw_picture(uint16_t xs, uint16_t xe, uint16_t ys, uint16_t ye, uint32_t picture) {
 
     rgb_reco_area(xs, xe, ys, ye);
     DMA2D -> CR      &= ~DMA2D_CR_START;      /* 停止DMA2D */
     DMA2D -> CR      = DMA2D_M2M;             /* 存储器到存储器 */
     DMA2D -> FGPFCCR = DMA2D_INPUT_RGB565;    /* 输入颜色格式（前景层）*/
     DMA2D -> OPFCCR  = DMA2D_OUTPUT_RGB565;   /* 输出颜色格式 */
-    DMA2D -> FGMAR   = (uint32_t)picture;     /* 输入地址（前景层）*/
+    DMA2D -> FGMAR   = picture;               /* 输入地址（前景层）*/
     DMA2D -> OMAR    = addr;                  /* 输出地址 */
     DMA2D -> NLR     = size;                  /* 大小 */
     DMA2D -> FGOR    = 0;                     /* 输入偏移（前景层）*/

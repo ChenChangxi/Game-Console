@@ -7,9 +7,13 @@
 
 /* LTDC外设 */
 #define RGB_AF                GPIO_AF14_LTDC
-#define RGB_MODE              1   /* 0为横屏，1为竖屏 */
-#define RGB_WIDTH             120
-#define RGB_HEIGHT            200
+#define RGB_MODE              1                           /* 0为横屏，1为竖屏 */
+#define RGB_WIDTH             400                         /* 窗口宽度 */
+#define RGB_HEIGHT            400                         /* 窗口高度 */
+#define RGB_WINDOW_XS         200                         /* 窗口X轴起始坐标 */
+#define RGB_WINDOW_YS         40                          /* 窗口Y轴起始坐标 */
+#define RGB_WINDOW_XE         RGB_WINDOW_XS + RGB_WIDTH   /* 窗口X轴结束坐标 */
+#define RGB_WINDOW_YE         RGB_WINDOW_YS + RGB_HEIGHT  /* 窗口Y轴结束坐标 */
 #define RGB_CLK_ENABLE()      do {__HAL_RCC_LTDC_CLK_ENABLE();} while (0)
 #define RGB_DMA_CLK_ENABLE()  do {__HAL_RCC_DMA2D_CLK_ENABLE();} while (0)
 
@@ -63,7 +67,7 @@ void rgb_reco_area(uint16_t xs, uint16_t xe, uint16_t ys, uint16_t ye);
 void rgb_draw_area(uint16_t xs, uint16_t xe, uint16_t ys, uint16_t ye, uint16_t area);
 
 /* 屏幕画图（DMA2D由M到M）*/
-void rgb_draw_picture(uint16_t xs, uint16_t xe, uint16_t ys, uint16_t ye, uint16_t *picture);
+void rgb_draw_picture(uint16_t xs, uint16_t xe, uint16_t ys, uint16_t ye, uint32_t picture);
 
 /* 变量声明 */
 extern uint32_t             addr, size, offs;
