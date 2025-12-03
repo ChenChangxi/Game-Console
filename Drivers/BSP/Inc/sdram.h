@@ -3,7 +3,6 @@
 #ifndef __SDRAM_H
 #define __SDRAM_H
 
-#include "sys.h"
 #include "delay.h"
 #include "string.h"
 

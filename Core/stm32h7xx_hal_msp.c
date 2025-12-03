@@ -1,9 +1,10 @@
-#include "key.h"
+#include "led.h"
+#include "wdg.h"
 #include "lcd.h"
 #include "rgb.h"
 #include "tpad.h"
-#include "timer.h"
 #include "nand.h"
+#include "timer.h"
 #include "usart.h"
 #include "sdram.h"
 
@@ -65,11 +66,11 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
         HAL_NVIC_SetPriority(LED_TIME_IRQn, 1, 1);
         HAL_NVIC_EnableIRQ(LED_TIME_IRQn);
 
-    } else if (htim->Instance == WDG_TIME) {
+    } else if (htim->Instance == WWDG_TIME) {
 
-        WDG_TIME_CLK_ENABLE();
-        HAL_NVIC_SetPriority(WDG_TIME_IRQn, 0, 1);
-        HAL_NVIC_EnableIRQ(WDG_TIME_IRQn);
+        WWDG_TIME_CLK_ENABLE();
+        HAL_NVIC_SetPriority(WWDG_TIME_IRQn, 0, 1);
+        HAL_NVIC_EnableIRQ(WWDG_TIME_IRQn);
 
     } else if (htim->Instance == MST_TIME) {
 

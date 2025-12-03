@@ -1,7 +1,10 @@
+#include "led.h"
 #include "key.h"
+#include "wdg.h"
+#include "tpad.h"
+#include "delay.h"
 #include "timer.h"
 #include "usart.h"
-#include "tpad.h"
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
 
@@ -43,7 +46,7 @@ void HAL_WWDG_EarlyWakeupCallback(WWDG_HandleTypeDef *hwwdg) {if (hwwdg->Instanc
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
     if (htim->Instance == LED_TIME) {LED0_TOGGLE();LED1_TOGGLE();}
-    else if (htim->Instance == WDG_TIME) {iwdg_feed();wwdg_feed();}
+    else if (htim->Instance == WWDG_TIME) {iwdg_feed();wwdg_feed();}
     else if (htim->Instance == BLN_TIME) {
 
         __HAL_TIM_SET_COMPARE(&bln_time_handler, BLN_TIME_PWM_CHANNEL, get_pers(400, &ins));              /* 改变占空比 */

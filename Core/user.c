@@ -1,10 +1,13 @@
+#include "led.h"
 #include "key.h"
+#include "wdg.h"
 #include "mpu.h"
 #include "lcd.h"
 #include "fmc.h"
 #include "rgb.h"
 #include "tpad.h"
 #include "oled.h"
+#include "nand.h"
 #include "timer.h"
 #include "usart.h"
 #include "stdio.h"
@@ -22,7 +25,7 @@ int main(void) {
     sys_cache_enable();
     memory_protect();
     delay_init(480);
-    led_init();
+    led_init(12000 - 1, 10000 - 1);                               /* 500ms*/
     key_init();
     iic_init();
     fmc_init();
@@ -35,10 +38,9 @@ int main(void) {
     ap3216c_init();
     pcf8574_init();
     usart_init(115200);
-    iwdg_init(IWDG_PRESCALER_8, 140);
-    wwdg_init(WWDG_PRESCALER_8, 0x7f, 0x5f);
+    iwdg_init(IWDG_PRESCALER_8, 104);
+    wwdg_init(WWDG_PRESCALER_8, 0x7f, 0x5f, 6240 - 1, 1000 - 1);  /* 26ms */
     tpad_init(6 - 1);                                             /* 25ns */
-    deay_time_init(12000 - 1, 10000 - 1, 7200 - 1, 1000 - 1);     /* 500ms,30ms */
     mast_time_init(1 - 1, 5 - 1);                                 /* 500ns */
     comp_time_init(1 - 1, 1000 - 1, 0xed);                        /* 500us,12us */
     capt_time_init(240 - 1, 0xffffffff - 1);                      /* 1us */

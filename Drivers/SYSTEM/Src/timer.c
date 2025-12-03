@@ -5,29 +5,9 @@ uint16_t cnx;
 uint16_t cny;
 uint16_t time_stat;
 uint16_t time_coun;
-TIM_HandleTypeDef led_time_handler;
-TIM_HandleTypeDef wdg_time_handler;
 TIM_HandleTypeDef bln_time_handler;
 TIM_HandleTypeDef kic_time_handler;
 TIM_HandleTypeDef mst_time_handler;
-
-void deay_time_init(uint16_t led_div, uint16_t led_cou, 
-                    uint16_t wdg_div, uint16_t wdg_cou) {
-
-    led_time_handler.Instance         = LED_TIME;
-    led_time_handler.Init.Prescaler   = led_div;
-    led_time_handler.Init.Period      = led_cou;
-    led_time_handler.Init.CounterMode = TIM_COUNTERMODE_UP;
-    HAL_TIM_Base_Init(&led_time_handler);
-    HAL_TIM_Base_Start_IT(&led_time_handler);
-
-    wdg_time_handler.Instance         = WDG_TIME;
-    wdg_time_handler.Init.Prescaler   = wdg_div;
-    wdg_time_handler.Init.Period      = wdg_cou;
-    wdg_time_handler.Init.CounterMode = TIM_COUNTERMODE_UP;
-    HAL_TIM_Base_Init(&wdg_time_handler);
-    HAL_TIM_Base_Start_IT(&wdg_time_handler);
-}
 
 void mast_time_init(uint16_t div, uint16_t cou) {
 
@@ -125,23 +105,14 @@ void capt_time_init(uint16_t div, uint32_t cou) {
 }
 
 uint16_t get_pers(uint16_t per, uint16_t *cou) {
-    
+
     return (uint16_t)(per - abs(per - ((*cou)++ % (per * 2))));
 }
 
 uint16_t get_digs(uint32_t time_tota) {
-    
+
     uint8_t size = 0;do {size++;time_tota /= 10;} while (time_tota > 0);return size;
 }
-
-void LED_BLN_UP_IRQHandler(void) {
-    
-    HAL_TIM_IRQHandler(&led_time_handler);HAL_TIM_IRQHandler(&bln_time_handler);
-}
-
-void LED_DAC_IRQHandler(void) {HAL_TIM_IRQHandler(&led_time_handler);}
-
-void WDG_TIME_IRQHandler(void) {HAL_TIM_IRQHandler(&wdg_time_handler);}
 
 void BLN_TIME_UP_IRQHandler(void) {HAL_TIM_IRQHandler(&bln_time_handler);}
 

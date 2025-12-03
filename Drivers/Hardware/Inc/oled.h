@@ -3,7 +3,6 @@
 #ifndef __OLED_H
 #define __OLED_H
 
-#include "sys.h"
 #include "delay.h"
 
 /* 8080并口引脚 */

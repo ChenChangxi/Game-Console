@@ -4,20 +4,7 @@
 #define __TIME_H
 
 #include "sys.h"
-#include "led.h"
 #include "stdlib.h"
-#include "wdg.h"
-
-/* 定时中断 */
-#define LED_TIME                    TIM6
-#define LED_TIME_IRQn               TIM6_DAC_IRQn
-#define LED_TIME_IRQHandler         TIM6_IRQHandler
-#define LED_TIME_CLK_ENABLE()       do {__HAL_RCC_TIM6_CLK_ENABLE();} while (0)
-
-#define WDG_TIME                    TIM7
-#define WDG_TIME_IRQn               TIM7_IRQn
-#define WDG_TIME_IRQHandler         TIM7_IRQHandler
-#define WDG_TIME_CLK_ENABLE()       do {__HAL_RCC_TIM7_CLK_ENABLE();} while (0)
 
 /* 输出比较 */
 #define BLN_TIME                    TIM1
@@ -63,10 +50,6 @@
 #define MST_GPIO_CLK_ENABLE()       do {__HAL_RCC_GPIOD_CLK_ENABLE();} while (0)
 #define MST_TIME_CLK_ENABLE()       do {__HAL_RCC_TIM3_CLK_ENABLE();}  while (0)
 
-/* 共享中断服务函数 */
-#define TIM6_IRQHandler             LED_DAC_IRQHandler
-#define LED_DAC_IRQHandler          TIM6_DAC_IRQHandler
-
 /* 0~1000折返 */
 uint16_t get_pers(uint16_t per, uint16_t *cou);
 
@@ -74,8 +57,6 @@ uint16_t get_pers(uint16_t per, uint16_t *cou);
 uint16_t get_digs(uint32_t time_tota);
 
 /* 定时器初始化 */
-void deay_time_init(uint16_t led_div, uint16_t led_cou, 
-                    uint16_t wdg_div, uint16_t wdg_cou);
 void mast_time_init(uint16_t div, uint16_t cou);
 void comp_time_init(uint16_t div, uint16_t cou, uint16_t dea);
 void capt_time_init(uint16_t div, uint32_t cou);
@@ -86,8 +67,6 @@ extern uint16_t cnx;
 extern uint16_t cny;
 extern uint16_t time_stat;       /* 0为发送状态，1为边沿状态，2~15为计数周期数 */
 extern uint16_t time_coun;       /* 计数器计数值 */
-extern TIM_HandleTypeDef led_time_handler;
-extern TIM_HandleTypeDef wdg_time_handler;
 extern TIM_HandleTypeDef bln_time_handler;
 extern TIM_HandleTypeDef kic_time_handler;
 extern TIM_HandleTypeDef mst_time_handler;
