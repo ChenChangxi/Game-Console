@@ -13,7 +13,7 @@
 #define BLN_TIME_PHASEY_CHANNEL     TIM_CHANNEL_2
 #define BLN_TIME_PHASEX_PIN         GPIO_PIN_8
 #define BLN_TIME_PHASEY_PIN         GPIO_PIN_9
-#define BLN_TIME_PHASE_PIN          GPIO_PIN_7
+#define BLN_TIME_PHASE_PIN          GPIO_PIN_11
 #define BLN_TIME_PORT               GPIOA
 #define BLC_TIME_PORT               GPIOB         /* 互补通道 */
 #define BLB_TIME_PORT               GPIOA         /* 刹车断路 */

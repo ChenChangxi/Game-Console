@@ -23,12 +23,10 @@
 #define USART_DATA_SIZE           300               /* 数据区大小 */
 
 /* 条件编译是否定义 */
-extern UART_HandleTypeDef uart_handler;              /* UART句柄 */
-extern DMA_HandleTypeDef  uart_dma_handler;          /* UART的DMA句柄 */
-extern uint16_t           uart_stat;                 /* 0~1为\n~\r，2~15为数据区大小，最大为16K */
-extern uint8_t            buff;                      /* 收发缓冲区（字节为单位）*/
-extern uint8_t            data[USART_DATA_SIZE];     /* 收发数据区（字节为单位）*/
-extern uint8_t            uart_dma_state;            /* UART的DMA传输状态 */
+extern UART_HandleTypeDef uart_handler;                 /* UART句柄 */
+extern DMA_HandleTypeDef  uart_dma_handler;             /* UART的DMA句柄 */
+extern uint16_t           uart_stat, uart_dma_stat;     /* 0~1为\n~\r，2~15为数据区大小，最大为16K */
+extern uint8_t            buff, data[USART_DATA_SIZE];  /* 收发缓冲区与数据区（字节为单位）*/
 
 /* USART初始化 */
 void usart_init(uint32_t baud);

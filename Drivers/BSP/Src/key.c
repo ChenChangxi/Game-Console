@@ -16,7 +16,7 @@ void key_init(void) {
     HAL_GPIO_Init(KEY0_EXTI_PORT, &key_handler);
 
     /* 配置NVIC */
-    HAL_NVIC_SetPriority(KEY0_EXTI_IRQn, 0, 2);
+    HAL_NVIC_SetPriority(KEY0_EXTI_IRQn, 0, 3);
     HAL_NVIC_EnableIRQ(KEY0_EXTI_IRQn);
 
     key_handler.Pin   = KEY1_EXTI_Pin;

@@ -8,7 +8,7 @@
 /* LCD命令引脚 */
 #define LCD_CON_PORT          GPIOD
 #define LCD_BLN_PORT          GPIOB
-#define LCD_CON_PIN           GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_7 | GPIO_PIN_13
+#define LCD_CON_PIN           GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_7
 #define LCD_BLN_PIN           GPIO_PIN_5
 #define LCD_AF                GPIO_AF12_FMC
 #define LCD_CON_CLK_ENABLE()  do {__HAL_RCC_GPIOD_CLK_ENABLE();} while (0)

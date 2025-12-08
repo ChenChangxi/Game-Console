@@ -1,6 +1,7 @@
 #include "led.h"
 #include "key.h"
 #include "wdg.h"
+#include "adc.h"
 #include "tpad.h"
 #include "delay.h"
 #include "timer.h"
@@ -8,7 +9,7 @@
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
 
-    if (huart->Instance == USART) uart_dma_state = 1;
+    if (huart->Instance == USART) uart_dma_stat = 1;
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
@@ -109,4 +110,9 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
         LL_GPIO_SetPinMode(TPAD_GPIO_PORT, TPAD_GPIO_PIN, GPIO_MODE_AF_PP);            /* 电容充电 */
         __HAL_TIM_SET_COUNTER(&tpad_time_handler, 0);
     }
+}
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
+
+    if (hadc->Instance == ADC) {adc_stat = 1;memcpy(dat, tem, ADC_SIZE * sizeof(uint32_t));}
 }

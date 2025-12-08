@@ -1,8 +1,7 @@
-# ────────────────  可按需修改的参数  ────────────────
-TOOLCHAIN ?= arm-none-eabi
-# Cortex-M7 (H743). 如需双精度FPU改为: -mfpu=fpv5-dp-d16
-CPU       := -mcpu=cortex-m7 -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard
+# Cortex-M7 (H743)
+CPU       := -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard
 OPT       := -Og -g3 -fno-inline -fno-omit-frame-pointer
+TOOLCHAIN ?= arm-none-eabi
 # ---------------------------------------------------
 
 CC      := $(TOOLCHAIN)-gcc
@@ -66,7 +65,7 @@ LDFLAGS = $(CPU) \
   --specs=nano.specs --specs=nosys.specs \
   -Wl,--gc-sections -Wl,-Map=$(BUILD)/$(PROJECT).map
 
-# ────────────────   目标  ────────────────
+# ----------------  目标  ----------------
 .PHONY: all clean size
 
 all: $(ELF) $(HEX) $(BIN) size

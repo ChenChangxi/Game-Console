@@ -2,6 +2,7 @@
 #include "wdg.h"
 #include "lcd.h"
 #include "rgb.h"
+#include "adc.h"
 #include "tpad.h"
 #include "nand.h"
 #include "timer.h"
@@ -27,7 +28,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 
         uart_dma_handler.Instance                 = USART_DMA_STREAM;
         uart_dma_handler.Init.Request             = USART_DMA_REQUEST;
-        uart_dma_handler.Init.Priority            = DMA_PRIORITY_HIGH;
+        uart_dma_handler.Init.Priority            = DMA_PRIORITY_MEDIUM;
         uart_dma_handler.Init.Mode                = DMA_NORMAL;
         uart_dma_handler.Init.Direction           = DMA_MEMORY_TO_PERIPH;
         uart_dma_handler.Init.PeriphInc           = DMA_PINC_DISABLE;
@@ -290,4 +291,54 @@ void HAL_LTDC_MspInit(LTDC_HandleTypeDef *hltdc) {
     ltdc_gpio_handler.Pin       = RGB_BLN_PIN;
     ltdc_gpio_handler.Mode      = GPIO_MODE_OUTPUT_PP;
     HAL_GPIO_Init(RGB_BLN_PORT, &ltdc_gpio_handler);
+}
+
+void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
+
+    if (hadc->Instance == ADC) {
+
+        GPIO_InitTypeDef        adc_gpio_handler = {0};
+        TIM_MasterConfigTypeDef mst_cfg_handler  = {0};
+
+        ADC_CLK_ENABLE();
+        ADC_DMA_CLK_ENABLE();
+        ADC_GPIO_CLK_ENABLE();
+        ADC_TIME_CLK_ENABLE();
+
+        adc_gpio_handler.Pin   = ADC_GPIO_PIN;
+        adc_gpio_handler.Mode  = GPIO_MODE_ANALOG;
+        HAL_GPIO_Init(ADC_GPIO_PORT, &adc_gpio_handler);
+
+        adc_dma_handler.Instance                 = ADC_DMA_STREAM;
+        adc_dma_handler.Init.Request             = ADC_DMA_REQUEST;
+        adc_dma_handler.Init.Priority            = DMA_PRIORITY_HIGH;
+        adc_dma_handler.Init.Mode                = DMA_CIRCULAR;
+        adc_dma_handler.Init.Direction           = DMA_PERIPH_TO_MEMORY;
+        adc_dma_handler.Init.PeriphInc           = DMA_PINC_DISABLE;
+        adc_dma_handler.Init.MemInc              = DMA_MINC_ENABLE;
+        adc_dma_handler.Init.PeriphDataAlignment = DMA_MDATAALIGN_HALFWORD;
+        adc_dma_handler.Init.MemDataAlignment    = DMA_MDATAALIGN_HALFWORD;
+        adc_dma_handler.Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
+        adc_dma_handler.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
+        adc_dma_handler.Init.PeriphBurst         = DMA_PBURST_SINGLE;
+        adc_dma_handler.Init.MemBurst            = DMA_MBURST_SINGLE;
+        HAL_DMA_Init(&adc_dma_handler);
+        __HAL_LINKDMA(&adc_init_handler, DMA_Handle, adc_dma_handler);
+
+        adc_time_handler.Instance = ADC_TIME;
+        adc_time_handler.Init.Prescaler         = ADC_TIME_DIV;
+        adc_time_handler.Init.Period            = ADC_TIME_COU;
+        adc_time_handler.Init.CounterMode       = TIM_COUNTERMODE_UP;
+        adc_time_handler.Init.RepetitionCounter = 1 - 1;
+        adc_time_handler.Init.ClockDivision     = TIM_CLOCKDIVISION_DIV1;
+        adc_time_handler.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+        HAL_TIM_Base_Init(&adc_time_handler);
+
+        mst_cfg_handler.MasterOutputTrigger  = TIM_TRGO_UPDATE;
+        mst_cfg_handler.MasterSlaveMode      = TIM_MASTERSLAVEMODE_DISABLE;
+        HAL_TIMEx_MasterConfigSynchronization(&adc_time_handler, &mst_cfg_handler);
+
+        HAL_NVIC_SetPriority(ADC_DMA_IRQn, 0, 2);
+        HAL_NVIC_EnableIRQ(ADC_DMA_IRQn);
+    }
 }

@@ -5,6 +5,7 @@
 #include "lcd.h"
 #include "fmc.h"
 #include "rgb.h"
+#include "adc.h"
 #include "tpad.h"
 #include "oled.h"
 #include "nand.h"
@@ -32,13 +33,14 @@ int main(void) {
     lcd_init();
     sdram_init();
     rgb_init();
+    adc_init();
     // oled_init();
     // nand_init();
     at24c02_init();
     ap3216c_init();
     pcf8574_init();
     usart_init(115200);
-    iwdg_init(IWDG_PRESCALER_8, 104);
+    iwdg_init(IWDG_PRESCALER_8, 105);
     wwdg_init(WWDG_PRESCALER_8, 0x7f, 0x5f, 6240 - 1, 1000 - 1);  /* 26ms */
     tpad_init(6 - 1);                                             /* 25ns */
     mast_time_init(1 - 1, 5 - 1);                                 /* 500ns */
@@ -70,6 +72,15 @@ int main(void) {
 
     while (1) {
 
+        if (adc_stat) {
+
+            float vot[ADC_CHANNEL] = {0};
+            uint32_t res[ADC_CHANNEL] = {0};
+            for (uint16_t j=0;j<ADC_SAMPLE;++j) 
+            for (uint16_t i=0;i<ADC_CHANNEL;++i) res[i] += (dat[j * ADC_SAMPLE + i] - off[i]);
+            for (uint16_t i=0;i<ADC_CHANNEL;++i) vot[i] = (3.3 / (1<<ADC_RANGE)) * (res[i] / ADC_SAMPLE);
+            
+        }
         if (time_stat & 0x8000) {
             
             uint32_t time_tota = (time_stat & 0x3fff) * 65536 + time_coun;
