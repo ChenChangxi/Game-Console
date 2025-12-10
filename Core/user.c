@@ -64,7 +64,7 @@ int main(void) {
 
     /* RGB显示 */
     for (uint16_t y=0;y<RGB_WIDTH;++y) for (uint16_t x=0;x<RGB_HEIGHT;++x) rgb_draw_dot(x, y, RED);
-    sys_cache_sram_sync((uint32_t)rgb_ram, (uint32_t)(RGB_HEIGHT * RGB_WIDTH * 2));
+    sys_cache_sram_sync((uint32_t)rgb_ram, (uint32_t)(RGB_HEIGHT * RGB_WIDTH * 2), 1);
     rgb_draw_area(350, 350 + 40 - 1, 10, 10 + 40 - 1, BLUE);      /* 闭区间 */
     rgb_draw_picture(8, 8 + 384 - 1, 176, 176 + 216 - 1, (uint32_t)Link38490);
     rgb_draw_picture(10, 10 + 150 - 1, 10, 10 + 150 - 1, (uint32_t)Lufei15090);
@@ -74,15 +74,19 @@ int main(void) {
 
         if (adc_stat) {
 
-            float vot[ADC_CHANNEL] = {0};
-            uint32_t res[ADC_CHANNEL] = {0};
+            uint32_t res[ADC_CHANNEL] = {0}, con = 0;
             for (uint16_t j=0;j<ADC_SAMPLE;++j) 
-            for (uint16_t i=0;i<ADC_CHANNEL;++i) res[i] += (dat[j * ADC_SAMPLE + i] - off[i]);
-            for (uint16_t i=0;i<ADC_CHANNEL;++i) vot[i] = (3.3 / (1<<ADC_RANGE)) * (res[i] / ADC_SAMPLE);
-            
+            for (uint16_t i=0;i<ADC_CHANNEL;++i) res[i] += (dat[j * ADC_CHANNEL + i] - off[i]);
+            for (uint16_t i=0;i<ADC_CHANNEL;++i) {
+
+                float vot = (3.3f / (1<<ADC_RANGE)) * (res[i] / ADC_SAMPLE);
+                con += snprintf(data + con, sizeof(data) - con, "%.4f ", vot);
+            }
+            data[con - 1] = '\0', con--, con += snprintf(data + con, sizeof(data) - con, "\r\n");
+            usart_transmit(data, con), adc_stat = 0;
         }
         if (time_stat & 0x8000) {
-            
+
             uint32_t time_tota = (time_stat & 0x3fff) * 65536 + time_coun;
             snprintf(data, 11 + get_digs(time_tota) + 1, "按下:%uus\r\n", time_tota);   /* size需包含\0 */
             usart_transmit(data, 11 + get_digs(time_tota));time_stat = 0;

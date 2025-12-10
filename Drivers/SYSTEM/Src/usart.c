@@ -23,9 +23,9 @@ void usart_init(uint32_t baud) {
 
 void usart_transmit(uint8_t *tran, uint16_t size) {
 
-    sys_cache_sram_sync((uint32_t)tran, (uint32_t)size);  /* 将DCache刷回SRAM */
-    HAL_UART_Transmit_DMA(&uart_handler, tran, size);     /* 发送DMA请求 */
-    while (!uart_dma_stat && size);uart_dma_stat = 0;     /* size为0时不会发起DMA传输 */
+    sys_cache_sram_sync((uint32_t)tran, (uint32_t)size, 1);  /* 将DCache刷回SRAM */
+    HAL_UART_Transmit_DMA(&uart_handler, tran, size);        /* 发送DMA请求 */
+    while (!uart_dma_stat && size);uart_dma_stat = 0;        /* size为0时不会发起DMA传输 */
 }
 
 void USART_IRQHandler(void) {

@@ -14,7 +14,7 @@ void sys_stm32_clock_init(uint32_t pllm, uint32_t plln, uint32_t pllp, uint32_t 
 void sys_cache_enable(void);
 
 /* DCache与SRAM同步 */
-void sys_cache_sram_sync(uint32_t addr, uint32_t size);
+void sys_cache_sram_sync(uint32_t addr, uint32_t size, uint8_t type);
 
 /* 变量声明 */
 extern RCC_OscInitTypeDef       osc_init;

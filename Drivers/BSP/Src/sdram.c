@@ -27,9 +27,9 @@ void sdram_init(void) {
     sdram_time_handler.ExitSelfRefreshDelay = 9;  /* TXSR 休眠结束到激活时间 */
 
     HAL_SDRAM_Init(&sdram_init_handler, &sdram_time_handler);w9825g6kh6_init();
-    HAL_SDRAM_ProgramRefreshRate(&sdram_init_handler, 938 - 20);   /* 行刷新速度（留裕量提前刷新）*/
-    memset((void *)0xC0000000, 0, 32 * 1024 * 1024);               /* 重置或上电后清理SDRAM */
-    sys_cache_sram_sync(0xC0000000, (uint32_t)(32 * 1024 * 1024)); /* 将DCache刷回SDRAM */
+    HAL_SDRAM_ProgramRefreshRate(&sdram_init_handler, 938 - 20);      /* 行刷新速度（留裕量提前刷新）*/
+    memset((void *)0xC0000000, 0, 32 * 1024 * 1024);                  /* 重置或上电后清理SDRAM */
+    sys_cache_sram_sync(0xC0000000, (uint32_t)(32 * 1024 * 1024), 1); /* 将DCache刷回SDRAM */
 }
 
 void w9825g6kh6_init(void) {

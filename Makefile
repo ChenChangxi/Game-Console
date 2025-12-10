@@ -2,7 +2,6 @@
 CPU       := -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard
 OPT       := -Og -g3 -fno-inline -fno-omit-frame-pointer
 TOOLCHAIN ?= arm-none-eabi
-# ---------------------------------------------------
 
 CC      := $(TOOLCHAIN)-gcc
 AS      := $(TOOLCHAIN)-gcc
@@ -28,7 +27,6 @@ SRC_C := \
   $(wildcard Drivers/SYSTEM/Src/*.c) \
   $(wildcard Drivers/BSP/Src/*.c)
 
-# 时钟驱动只能有一个
 SRC_C := $(filter-out \
   %stm32h7xx_hal_timebase_tim_template.c \
   %stm32h7xx_hal_timebase_rtc_alarm_template.c \
@@ -57,35 +55,30 @@ INCLUDES = \
 # 全局宏
 DEFINES = -DSTM32H743xx -DUSE_HAL_DRIVER
 
-# 编译、汇编、链接选项
+# 编译，汇编，链接
 CFLAGS  = $(CPU) $(OPT) -Wall -ffunction-sections -fdata-sections $(INCLUDES) $(DEFINES)
 ASFLAGS = $(CPU) -x assembler-with-cpp $(DEFINES)
 LDFLAGS = $(CPU) \
   -TLinker/STM32H743.ld \
   --specs=nano.specs --specs=nosys.specs \
-  -Wl,--gc-sections -Wl,-Map=$(BUILD)/$(PROJECT).map
+  -Wl,--gc-sections -Wl,-Map=$(BUILD)/$(PROJECT).map -Wl,-u,_printf_float
 
-# ----------------  目标  ----------------
 .PHONY: all clean size
 
 all: $(ELF) $(HEX) $(BIN) size
 
-# 生成目录并编译 C
 $(BUILD)/%.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# 生成目录并编译汇编
 $(BUILD)/%.o: %.s
 	@mkdir -p $(dir $@)
 	$(AS) $(ASFLAGS) -c $< -o $@
 
-# 链接
 $(ELF): $(OBJS) Linker/STM32H743.ld
 	@mkdir -p $(dir $@)
 	$(LD) $(OBJS) -o $@ $(LDFLAGS)
 
-# 生成 hex / bin
 $(HEX): $(ELF)
 	$(OBJCOPY) -O ihex $< $@
 

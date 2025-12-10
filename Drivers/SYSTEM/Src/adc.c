@@ -1,7 +1,8 @@
 #include "adc.h"
 
 uint8_t           adc_stat;
-uint32_t          dat[ADC_SIZE], tem[ADC_SIZE], off[ADC_CHANNEL];
+uint32_t          off[ADC_CHANNEL];
+uint16_t          dat[ADC_SIZE], tem[ADC_SIZE];
 ADC_HandleTypeDef adc_init_handler;
 DMA_HandleTypeDef adc_dma_handler;
 TIM_HandleTypeDef adc_time_handler;
@@ -37,7 +38,7 @@ void adc_init(void) {
     adc_config_channel(ADC_CHANNEL_18, ADC_REGULAR_RANK_4, ADC_SAMPLETIME_387CYCLES_5);off[3] = 0;
     adc_config_channel(ADC_CHANNEL_7,  ADC_REGULAR_RANK_5, ADC_SAMPLETIME_387CYCLES_5);off[4] = 0;
 
-    HAL_ADC_Start_DMA(&adc_init_handler, tem, ADC_SIZE);
+    HAL_ADC_Start_DMA(&adc_init_handler, (uint32_t *)tem, ADC_SIZE);
     HAL_TIM_Base_Start(&adc_time_handler);  /* 定时器最后开启 */
 }
 

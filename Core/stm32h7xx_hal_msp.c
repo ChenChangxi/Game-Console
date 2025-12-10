@@ -316,7 +316,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
         adc_dma_handler.Init.Direction           = DMA_PERIPH_TO_MEMORY;
         adc_dma_handler.Init.PeriphInc           = DMA_PINC_DISABLE;
         adc_dma_handler.Init.MemInc              = DMA_MINC_ENABLE;
-        adc_dma_handler.Init.PeriphDataAlignment = DMA_MDATAALIGN_HALFWORD;
+        adc_dma_handler.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
         adc_dma_handler.Init.MemDataAlignment    = DMA_MDATAALIGN_HALFWORD;
         adc_dma_handler.Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
         adc_dma_handler.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
