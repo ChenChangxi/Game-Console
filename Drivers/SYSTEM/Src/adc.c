@@ -1,8 +1,8 @@
 #include "adc.h"
 
 uint8_t           adc_stat;
+uint16_t          dat[ADC_PAD] __attribute__((aligned(32)));
 uint32_t          off[ADC_CHANNEL];
-uint16_t          dat[ADC_SIZE], tem[ADC_SIZE];
 ADC_HandleTypeDef adc_init_handler;
 DMA_HandleTypeDef adc_dma_handler;
 TIM_HandleTypeDef adc_time_handler;
@@ -24,7 +24,7 @@ void adc_init(void) {
     adc_init_handler.Init.NbrOfConversion          = ADC_CHANNEL;                     /* 规则组5通道 */
     adc_init_handler.Init.DiscontinuousConvMode    = DISABLE;                         /* 非间断模式 */
     adc_init_handler.Init.NbrOfDiscConversion      = 0;                               /* 间断规则组0通道 */
-    adc_init_handler.Init.OversamplingMode         = ENABLE;                          /* 过采样模式 */
+    adc_init_handler.Init.OversamplingMode         = DISABLE;                         /* 过采样模式 */
     adc_init_handler.Init.Oversampling.Ratio                 =
     adc_init_handler.Init.Oversampling.RightBitShift         =
     adc_init_handler.Init.Oversampling.TriggeredMode         =
@@ -38,7 +38,7 @@ void adc_init(void) {
     adc_config_channel(ADC_CHANNEL_18, ADC_REGULAR_RANK_4, ADC_SAMPLETIME_387CYCLES_5);off[3] = 0;
     adc_config_channel(ADC_CHANNEL_7,  ADC_REGULAR_RANK_5, ADC_SAMPLETIME_387CYCLES_5);off[4] = 0;
 
-    HAL_ADC_Start_DMA(&adc_init_handler, (uint32_t *)tem, ADC_SIZE);
+    HAL_ADC_Start_DMA(&adc_init_handler, (uint32_t *)dat, ADC_SIZE);
     HAL_TIM_Base_Start(&adc_time_handler);  /* 定时器最后开启 */
 }
 

@@ -114,8 +114,5 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
 
-    if (hadc->Instance == ADC) {
-
-        adc_stat = 1;sys_cache_sram_sync((uint32_t)tem, sizeof(tem), 0);memcpy(dat, tem, ADC_SIZE * sizeof(uint16_t));
-    }
+    if (hadc->Instance == ADC) {adc_stat = 1;sys_cache_sram_sync((uint32_t)dat, sizeof(dat), 0);}
 }

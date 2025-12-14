@@ -68,7 +68,7 @@ void sys_cache_enable(void) {SCB_EnableICache();SCB_EnableDCache();}
 
 void sys_cache_sram_sync(uint32_t addr, uint32_t size, uint8_t type) {
 
-    uint32_t *addr_agn = (uint32_t *)(addr & ~0x1f);
-    int32_t   size_agn = ((addr + size + 31) & ~0x1f) - (addr & ~0x1f);
+    uint32_t *addr_agn = (uint32_t *)(addr & ~0x1f);                     /* 向下对齐 */
+    int32_t   size_agn = ((addr + size + 31) & ~0x1f) - (addr & ~0x1f);  /* 向上对齐 */
     if (type) SCB_CleanDCache_by_Addr(addr_agn, size_agn);else SCB_InvalidateDCache_by_Addr(addr_agn, size_agn);
 }
