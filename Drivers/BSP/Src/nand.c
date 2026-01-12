@@ -10,9 +10,8 @@ void nand_init(void) {
     nand_init_handler.Init.MemoryDataWidth = FMC_NAND_MEM_BUS_WIDTH_8;  /* 命令/地址/数据宽度 */
     nand_init_handler.Init.EccComputation  = FMC_NAND_ECC_DISABLE;      /* 需要计算ECC时打开 */
     nand_init_handler.Init.ECCPageSize     = 
-    nand_init_handler.Init.TARSetupTime    = 
-    nand_init_handler.Init.TCLRSetupTime   = 
-    nand_init_handler.Init.TCLRSetupTime   = 
+    nand_init_handler.Init.TARSetupTime    =  /* 地址建立时间 */
+    nand_init_handler.Init.TCLRSetupTime   =  /* 命令建立时间 */
 
     nand_time_handler.SetupTime     = 
     nand_time_handler.HoldSetupTime = 

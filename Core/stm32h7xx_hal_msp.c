@@ -5,6 +5,7 @@
 #include "adc.h"
 #include "tpad.h"
 #include "nand.h"
+#include "qspi.h"
 #include "timer.h"
 #include "usart.h"
 #include "sdram.h"
@@ -341,4 +342,30 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
         HAL_NVIC_SetPriority(ADC_DMA_IRQn, 0, 2);
         HAL_NVIC_EnableIRQ(ADC_DMA_IRQn);
     }
+}
+
+void HAL_QSPI_MspInit(QSPI_HandleTypeDef *hqspi) {
+
+    GPIO_InitTypeDef qspi_gpio_handler = {0};
+
+    QSPI_CLK_ENABLE();
+    QSPI_IOx_CLK_ENABLE();
+    QSPI_CLK_NCS_CLK_ENABLE();
+
+    qspi_gpio_handler.Pin       = QSPI_CLK_PIN;
+    qspi_gpio_handler.Mode      = GPIO_MODE_AF_PP;
+    qspi_gpio_handler.Alternate = QSPI_AF_X;
+    qspi_gpio_handler.Pull      = GPIO_PULLUP;
+    qspi_gpio_handler.Speed     = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(QSPI_CLK_NCS_PORT, &qspi_gpio_handler);
+
+    qspi_gpio_handler.Pin       = QSPI_IO32_PIN;
+    HAL_GPIO_Init(QSPI_IOx_PORT, &qspi_gpio_handler);
+
+    qspi_gpio_handler.Pin       = QSPI_NCS_PIN;
+    qspi_gpio_handler.Alternate = QSPI_AF_Y;
+    HAL_GPIO_Init(QSPI_CLK_NCS_PORT, &qspi_gpio_handler);
+
+    qspi_gpio_handler.Pin       = QSPI_IO01_PIN;
+    HAL_GPIO_Init(QSPI_IOx_PORT, &qspi_gpio_handler);
 }

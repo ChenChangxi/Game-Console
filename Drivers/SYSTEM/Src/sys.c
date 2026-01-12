@@ -48,8 +48,15 @@ void sys_stm32_clock_init(uint32_t pllm, uint32_t plln, uint32_t pllp, uint32_t 
 
     per_init.PeriphClockSelection      = RCC_PERIPHCLK_ADC
                                        | RCC_PERIPHCLK_LTDC
+                                       | RCC_PERIPHCLK_QSPI
                                        | RCC_PERIPHCLK_USART16
                                        | RCC_PERIPHCLK_USART234578;
+    per_init.PLL2.PLL2M                = 5;
+    per_init.PLL2.PLL2N                = 80;
+    per_init.PLL2.PLL2R                = 2;           /* QSPI时钟 */
+    per_init.PLL2.PLL2RGE              = RCC_PLL2VCIRANGE_2;
+    per_init.PLL2.PLL2VCOSEL           = RCC_PLL2VCOWIDE;
+    per_init.PLL2.PLL2FRACN            = 0;
     per_init.PLL3.PLL3M                = 5;
     per_init.PLL3.PLL3N                = 66;
     per_init.PLL3.PLL3R                = 10;          /* RGB-LCD像素时钟 */
@@ -57,6 +64,7 @@ void sys_stm32_clock_init(uint32_t pllm, uint32_t plln, uint32_t pllp, uint32_t 
     per_init.PLL3.PLL3VCOSEL           = RCC_PLL3VCOWIDE;
     per_init.PLL3.PLL3FRACN            = 0;
     per_init.AdcClockSelection         = RCC_ADCCLKSOURCE_PLL3;              /* ADC和LTDC共用PLL3R */
+    per_init.QspiClockSelection        = RCC_ADCCLKSOURCE_PLL2;              /* QSPI用PLL2R */
     per_init.Usart16ClockSelection     = RCC_USART16CLKSOURCE_D2PCLK2;       /* 16挂载在APB2总线，共用一个选择器 */
     per_init.Usart234578ClockSelection = RCC_USART234578CLKSOURCE_D2PCLK1;   /* 234578挂载在APB1总线 ，共用一个选择器 */
     HAL_RCCEx_PeriphCLKConfig(&per_init);

@@ -9,11 +9,10 @@
 #include "tpad.h"
 #include "oled.h"
 #include "nand.h"
+#include "qspi.h"
 #include "timer.h"
 #include "usart.h"
-#include "stdio.h"
 #include "sdram.h"
-#include "string.h"
 #include "picture.h"
 #include "at24c02.h"
 #include "ap3216c.h"
@@ -35,7 +34,8 @@ int main(void) {
     rgb_init();
     adc_init();
     // oled_init();
-    // nand_init();
+    nand_init();
+    qspi_init();
     at24c02_init();
     ap3216c_init();
     pcf8574_init();

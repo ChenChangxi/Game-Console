@@ -4,7 +4,6 @@
 #define __TIME_H
 
 #include "sys.h"
-#include "stdlib.h"
 
 /* 输出比较 */
 #define BLN_TIME                    TIM1

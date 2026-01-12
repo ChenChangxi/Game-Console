@@ -4,7 +4,6 @@
 #define __SDRAM_H
 
 #include "delay.h"
-#include "string.h"
 
 /* SDRAM命令引脚 */
 #define SDRAM_CAS_PORT          GPIOG           /* 行选通 */

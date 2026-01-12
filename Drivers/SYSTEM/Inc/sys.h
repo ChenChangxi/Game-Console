@@ -3,6 +3,9 @@
 #ifndef __SYS_H
 #define __SYS_H
 
+#include "stdio.h"
+#include "string.h"
+#include "stdlib.h"
 #include "stm32h7xx.h"
 #include "stm32h7xx_hal.h"
 #include "stm32h7xx_ll_gpio.h"

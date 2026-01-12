@@ -1,7 +1,7 @@
-/* NAND FLASH驱动 */
+/* MT29F4G08驱动 */
 
-#ifndef __NAND_FLASH_H
-#define __NAND_FLASH_H
+#ifndef __MT29F4G08_H
+#define __MT29F4G08_H
 
 #include "sys.h"
 
@@ -23,7 +23,7 @@
 #define NAND_NCE_CLK_ENABLE()  do {__HAL_RCC_GPIOG_CLK_ENABLE();} while (0)
 #define NAND_NWA_CLK_ENABLE()  do {__HAL_RCC_GPIOD_CLK_ENABLE();} while (0)
 
-/* 初始化NAND FLASH */
+/* 初始化MT29F4G08 */
 void nand_init(void);
 
 /* 变量声明 */

@@ -68,7 +68,7 @@ void memory_protect(void) {
     mpu_set(MPU_REGION_NUMBER6,
             0x80000000,                      /* NAND FLASH */
             MPU_REGION_SIZE_256KB,           /* FMC BANK3 */
-            MPU_INSTRUCTION_ACCESS_ENABLE,   /* 允许取指 */
+            MPU_INSTRUCTION_ACCESS_DISABLE,  /* 不允许取指（只存数据）*/
             MPU_REGION_FULL_ACCESS,          /* 完全读写 */
             MPU_TEX_LEVEL0,                  /* TEX低位为0 */
             MPU_ACCESS_NOT_CACHEABLE,        /* 禁止Cache */
@@ -76,6 +76,16 @@ void memory_protect(void) {
             MPU_ACCESS_NOT_SHAREABLE);       /* 不允许共享 */
 
     mpu_set(MPU_REGION_NUMBER7,
+            0x90000000,                      /* NOR FLASH */
+            MPU_REGION_SIZE_8MB,             /* Code */
+            MPU_INSTRUCTION_ACCESS_ENABLE,   /* 允许取指 */
+            MPU_REGION_FULL_ACCESS,          /* 完全读写 */
+            MPU_TEX_LEVEL1,                  /* TEX低位为1 */
+            MPU_ACCESS_CACHEABLE,            /* 允许Cache */
+            MPU_ACCESS_BUFFERABLE,           /* 允许Buffer（同步）*/
+            MPU_ACCESS_NOT_SHAREABLE);       /* 不允许共享 */
+
+    mpu_set(MPU_REGION_NUMBER8,
             0xC0000000,                      /* SDRAM */
             MPU_REGION_SIZE_32MB,            /* FMC SDRAM BANK1 */
             MPU_INSTRUCTION_ACCESS_ENABLE,   /* 允许取指 */
