@@ -29,12 +29,15 @@
 #define ReadStatusReg2        0x35         /* 读REG2 */
 #define ReadStatusReg3        0x15         /* 读REG3 */
 #define PageProgramQuad       0x32         /* 页写 */
-#define FastReadQuad          0xEB         /* 快读 */
-#define BlockErase            0xD8         /* 块擦除 */
+#define FastReadQuad          0xeb         /* 快读 */
+#define BlockErase            0xd8         /* 块擦除 */
 #define SectorErase           0x20         /* 区擦除 */
-#define ChipErase             0xC7         /* 片擦除 */
-#define Enable4ByteAddr       0xB7         /* 进入4字节模式 */
-#define ExitQPIMode           0xFF         /* 退出QPI模式 */
+#define ChipErase             0xc7         /* 片擦除 */
+#define Enable4ByteAddr       0xb7         /* 进入4字节模式 */
+#define ExitQPIMode           0xff         /* 退出QPI模式 */
+
+/* 枚举定义 */
+typedef enum {INDIRECT, MEMORYMAP} QSPI_Mode;
 
 /* 初始化QSPI */
 void qspi_init(void);
@@ -42,12 +45,15 @@ void qspi_init(void);
 /* QSPI接口 */
 void spi_cmd(uint8_t cmd);                                      /* 发送指令 */
 void spi_read(uint8_t cmd, uint8_t *sta, uint8_t num);          /* 发送指令读数据 */
+void spi_write(uint8_t cmd, uint8_t *sta, uint8_t num);         /* 发送指令写数据 */
 void spi_erase(uint8_t cmd, uint32_t adr);                      /* 发送指令地址（擦除）*/
 void spi_read_data(uint32_t adr, uint8_t *dat, uint32_t num);   /* 发送指令地址读数据 */
 void spi_write_data(uint32_t adr, uint8_t *dat, uint32_t num);  /* 发送指令地址写数据 */
-void spi_memory_map(void);                                      /* 开启内存映射模式 */
+void spi_indirect(void);                                        /* 进入间接模式 */
+void spi_memory_map(void);                                      /* 进入内存映射模式 */
 
 /* 变量声明 */
+extern QSPI_Mode                qspi_mode;
 extern QSPI_HandleTypeDef       qspi_init_handler;
 extern QSPI_CommandTypeDef      qspi_comd_handler;
 extern QSPI_MemoryMappedTypeDef qspi_mema_handler;

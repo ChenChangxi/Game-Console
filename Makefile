@@ -21,6 +21,7 @@ SRC_C := \
   $(wildcard Resources/Font/Src/*.c) \
   $(wildcard Resources/Picture/Src/*.c) \
   $(wildcard Resources/Video/Src/*.c) \
+  $(wildcard Middlewares/LittleFS/Src/*.c) \
   $(wildcard Drivers/CMSIS/Device/ST/STM32H7xx/Source/*.c) \
   $(wildcard Drivers/STM32H7xx_HAL_Driver/Src/*.c) \
   $(wildcard Drivers/Hardware/Src/*.c) \
@@ -45,6 +46,7 @@ INCLUDES = \
   -IResources/Font/Inc \
   -IResources/Picture/Inc \
   -IResources/Video/Inc \
+  -IMiddlewares/LittleFS/Inc \
   -IDrivers/CMSIS/Include \
   -IDrivers/CMSIS/Device/ST/STM32H7xx/Include \
   -IDrivers/STM32H7xx_HAL_Driver/Inc \

@@ -1,5 +1,6 @@
 #include "qspi.h"
 
+QSPI_Mode                qspi_mode;
 QSPI_HandleTypeDef       qspi_init_handler;
 QSPI_CommandTypeDef      qspi_comd_handler;
 QSPI_MemoryMappedTypeDef qspi_mema_handler;
@@ -25,7 +26,6 @@ void qspi_init(void) {
     qspi_comd_handler.AddressSize             = QSPI_ADDRESS_32_BITS;            /* 地址长度 */
     qspi_comd_handler.AlternateBytes          = 0;                               /* 交替字节 */
     qspi_comd_handler.AlternateBytesSize      = QSPI_ALTERNATE_BYTES_8_BITS;     /* 交替字节长度 */
-    qspi_comd_handler.AlternateByteMode       = QSPI_ALTERNATE_BYTES_NONE;       /* 交替字节模式 */
 
     HAL_QSPI_Init(&qspi_init_handler);spi_memory_map();
 }
@@ -33,21 +33,35 @@ void qspi_init(void) {
 void spi_cmd(uint8_t cmd) {
 
     qspi_comd_handler.Instruction = cmd;
+    qspi_comd_handler.AddressMode = QSPI_ADDRESS_NONE;
+    qspi_comd_handler.DataMode    = QSPI_DATA_NONE;
     HAL_QSPI_Command(&qspi_init_handler, &qspi_comd_handler, QSPI_TIM_OUT);
 }
 
 void spi_read(uint8_t cmd, uint8_t *sta, uint8_t num) {
 
     qspi_comd_handler.Instruction = cmd;
+    qspi_comd_handler.AddressMode = QSPI_ADDRESS_NONE;
     qspi_comd_handler.NbData      = num;                  /* 数据长度 */
     qspi_comd_handler.DataMode    = QSPI_DATA_1_LINE;     /* 数据模式 */
     HAL_QSPI_Command(&qspi_init_handler, &qspi_comd_handler, QSPI_TIM_OUT);
     HAL_QSPI_Receive(&qspi_init_handler, sta, QSPI_TIM_OUT);
 }
 
+void spi_write(uint8_t cmd, uint8_t *sta, uint8_t num) {
+
+    qspi_comd_handler.Instruction = cmd;
+    qspi_comd_handler.AddressMode = QSPI_ADDRESS_NONE;
+    qspi_comd_handler.NbData      = num;                  /* 数据长度 */
+    qspi_comd_handler.DataMode    = QSPI_DATA_1_LINE;     /* 数据模式 */
+    HAL_QSPI_Command(&qspi_init_handler, &qspi_comd_handler, QSPI_TIM_OUT);
+    HAL_QSPI_Transmit(&qspi_init_handler, sta, QSPI_TIM_OUT);
+}
+
 void spi_erase(uint8_t cmd, uint32_t adr) {
 
     qspi_comd_handler.Instruction = cmd;
+    qspi_comd_handler.DataMode    = QSPI_DATA_NONE;
     qspi_comd_handler.Address     = adr;                  /* 地址 */
     qspi_comd_handler.AddressMode = QSPI_ADDRESS_1_LINE;  /* 地址模式 */
     HAL_QSPI_Command(&qspi_init_handler, &qspi_comd_handler, QSPI_TIM_OUT);
@@ -55,7 +69,21 @@ void spi_erase(uint8_t cmd, uint32_t adr) {
 
 void spi_read_data(uint32_t adr, uint8_t *dat, uint32_t num) {
 
-    memcpy(dat, (const void *)(QSPI_BASE + adr), num);    /* 内存映射模式 */
+    if (qspi_mode == INDIRECT) {
+
+        qspi_comd_handler.Instruction       = FastReadQuad;
+        qspi_comd_handler.Address           = adr;                           /* 地址 */
+        qspi_comd_handler.AddressMode       = QSPI_ADDRESS_4_LINES;          /* 地址模式 */
+        qspi_comd_handler.NbData            = num;                           /* 数据长度 */
+        qspi_comd_handler.DataMode          = QSPI_DATA_4_LINES;             /* 数据模式 */
+        qspi_comd_handler.DummyCycles       = 4;                             /* 空指令周期 */
+        qspi_comd_handler.AlternateByteMode = QSPI_ALTERNATE_BYTES_4_LINES;  /* 交替字节模式 */
+        HAL_QSPI_Command(&qspi_init_handler, &qspi_comd_handler, QSPI_TIM_OUT);
+        HAL_QSPI_Receive(&qspi_init_handler, dat, QSPI_TIM_OUT);
+        qspi_comd_handler.DummyCycles       = 0;
+        qspi_comd_handler.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
+
+    } else memcpy(dat, (const void *)(QSPI_BASE + adr), num);
 }
 
 void spi_write_data(uint32_t adr, uint8_t *dat, uint32_t num) {
@@ -69,11 +97,21 @@ void spi_write_data(uint32_t adr, uint8_t *dat, uint32_t num) {
     HAL_QSPI_Transmit(&qspi_init_handler, dat, QSPI_TIM_OUT);
 }
 
+void spi_indirect(void) {
+
+    qspi_mode                           = INDIRECT;
+    qspi_comd_handler.DummyCycles       = 0;
+    qspi_comd_handler.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
+    HAL_QSPI_Abort(&qspi_init_handler);
+}
+
 void spi_memory_map(void) {
     
-    qspi_comd_handler.Instruction = FastReadQuad;
-    qspi_comd_handler.DummyCycles = 
-    qspi_comd_handler.AddressMode = QSPI_ADDRESS_4_LINES;  /* 地址模式 */  
-    qspi_comd_handler.DataMode    = QSPI_DATA_4_LINES;     /* 数据模式 */
+    qspi_mode                           = MEMORYMAP;
+    qspi_comd_handler.Instruction       = FastReadQuad;
+    qspi_comd_handler.AddressMode       = QSPI_ADDRESS_4_LINES;          /* 地址模式 */  
+    qspi_comd_handler.DataMode          = QSPI_DATA_4_LINES;             /* 数据模式 */
+    qspi_comd_handler.DummyCycles       = 4;                             /* 空指令周期 */
+    qspi_comd_handler.AlternateByteMode = QSPI_ALTERNATE_BYTES_4_LINES;  /* 交替字节模式 */
     HAL_QSPI_MemoryMapped(&qspi_init_handler, &qspi_comd_handler, &qspi_mema_handler);
 }
