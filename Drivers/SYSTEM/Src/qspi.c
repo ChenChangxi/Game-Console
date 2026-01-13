@@ -27,7 +27,7 @@ void qspi_init(void) {
     qspi_comd_handler.AlternateBytes          = 0;                               /* 交替字节 */
     qspi_comd_handler.AlternateBytesSize      = QSPI_ALTERNATE_BYTES_8_BITS;     /* 交替字节长度 */
 
-    HAL_QSPI_Init(&qspi_init_handler);spi_memory_map();
+    HAL_QSPI_Init(&qspi_init_handler);
 }
 
 void spi_cmd(uint8_t cmd) {
@@ -67,11 +67,11 @@ void spi_erase(uint8_t cmd, uint32_t adr) {
     HAL_QSPI_Command(&qspi_init_handler, &qspi_comd_handler, QSPI_TIM_OUT);
 }
 
-void spi_read_data(uint32_t adr, uint8_t *dat, uint32_t num) {
+void spi_read_data(uint8_t cmd, uint32_t adr, uint8_t *dat, uint32_t num) {
 
     if (qspi_mode == INDIRECT) {
 
-        qspi_comd_handler.Instruction       = FastReadQuad;
+        qspi_comd_handler.Instruction       = cmd;
         qspi_comd_handler.Address           = adr;                           /* 地址 */
         qspi_comd_handler.AddressMode       = QSPI_ADDRESS_4_LINES;          /* 地址模式 */
         qspi_comd_handler.NbData            = num;                           /* 数据长度 */
@@ -86,9 +86,9 @@ void spi_read_data(uint32_t adr, uint8_t *dat, uint32_t num) {
     } else memcpy(dat, (const void *)(QSPI_BASE + adr), num);
 }
 
-void spi_write_data(uint32_t adr, uint8_t *dat, uint32_t num) {
+void spi_write_data(uint8_t cmd, uint32_t adr, uint8_t *dat, uint32_t num) {
 
-    qspi_comd_handler.Instruction = PageProgramQuad;
+    qspi_comd_handler.Instruction = cmd;
     qspi_comd_handler.Address     = adr;                  /* 地址 */
     qspi_comd_handler.AddressMode = QSPI_ADDRESS_1_LINE;  /* 地址模式 */
     qspi_comd_handler.NbData      = num;                  /* 数据长度 */
@@ -105,10 +105,10 @@ void spi_indirect(void) {
     HAL_QSPI_Abort(&qspi_init_handler);
 }
 
-void spi_memory_map(void) {
+void spi_memory_map(uint8_t cmd) {
     
     qspi_mode                           = MEMORYMAP;
-    qspi_comd_handler.Instruction       = FastReadQuad;
+    qspi_comd_handler.Instruction       = cmd;
     qspi_comd_handler.AddressMode       = QSPI_ADDRESS_4_LINES;          /* 地址模式 */  
     qspi_comd_handler.DataMode          = QSPI_DATA_4_LINES;             /* 数据模式 */
     qspi_comd_handler.DummyCycles       = 4;                             /* 空指令周期 */
