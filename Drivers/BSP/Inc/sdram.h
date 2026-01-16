@@ -1,7 +1,7 @@
-/* SDRAM驱动 */
+/* W9825G6KH6驱动 */
 
-#ifndef __SDRAM_H
-#define __SDRAM_H
+#ifndef __W9825G6KH6_H
+#define __W9825G6KH6_H
 
 #include "delay.h"
 

@@ -33,7 +33,6 @@ void spi_cmd(uint8_t cmd);                                                   /* 
 void spi_read(uint8_t cmd, uint8_t *sta, uint8_t num);                       /* 发送指令读数据 */
 void spi_write(uint8_t cmd, uint8_t *sta, uint8_t num);                      /* 发送指令写数据 */
 void spi_erase(uint8_t cmd, uint32_t adr);                                   /* 发送指令地址（擦除）*/
-void spi_read_data(uint8_t cmd, uint32_t adr, uint8_t *dat, uint32_t num);   /* 发送指令地址读数据 */
 void spi_write_data(uint8_t cmd, uint32_t adr, uint8_t *dat, uint32_t num);  /* 发送指令地址写数据 */
 void spi_indirect(void);                                                     /* 进入间接模式 */
 void spi_memory_map(uint8_t cmd);                                            /* 进入内存映射模式 */

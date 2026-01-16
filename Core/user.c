@@ -13,8 +13,8 @@
 #include "timer.h"
 #include "usart.h"
 #include "sdram.h"
+#include "eeprom.h"
 #include "picture.h"
-#include "at24c02.h"
 #include "ap3216c.h"
 #include "pcf8574.h"
 
@@ -35,7 +35,7 @@ int main(void) {
     adc_init();
     // oled_init();
     nand_init();
-    qspi_init();
+    // qspi_init();
     at24c02_init();
     ap3216c_init();
     pcf8574_init();
@@ -95,14 +95,14 @@ int main(void) {
 
             uint16_t data_size = uart_stat & 0x3fff;
             snprintf(data + data_size, sizeof(data) - data_size, "\r\n");data_size += 2;uart_stat = 0;
-            if (!strcmp(data, "show\r\n"))  {atc_read(0, data, atc_addr);usart_transmit(data, atc_addr);}
+            if (!strcmp(data, "show\r\n"))  {rom_read(0, data, rom_addr);usart_transmit(data, rom_addr);}
             else if (!strcmp(data, "erase\r\n"))  {
 
-                usart_transmit(atc_ders, strlen(atc_ders));
-                atc_write(0, atc_erse, 256);atc_addr = 0;atc_write(0xff, &atc_addr, 1);
+                usart_transmit(rom_ders, strlen(rom_ders));
+                rom_write(0, rom_erse, 256);rom_addr = 0;rom_write(0xff, &rom_addr, 1);
 
-            } else if (atc_addr + data_size > 0xfe) usart_transmit(atc_dout, strlen(atc_dout));
-            else {atc_write(atc_addr, data, data_size);atc_addr += data_size;atc_write(0xff, &atc_addr, 1);}
+            } else if (rom_addr + data_size > 0xfe) usart_transmit(rom_dout, strlen(rom_dout));
+            else {rom_write(rom_addr, data, data_size);rom_addr += data_size;rom_write(0xff, &rom_addr, 1);}
         }
         if (ctor_coun > 120) pcf_write(0, BEEP);else pcf_write(1, BEEP);
     }

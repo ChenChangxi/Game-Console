@@ -67,25 +67,6 @@ void spi_erase(uint8_t cmd, uint32_t adr) {
     HAL_QSPI_Command(&qspi_init_handler, &qspi_comd_handler, QSPI_TIM_OUT);
 }
 
-void spi_read_data(uint8_t cmd, uint32_t adr, uint8_t *dat, uint32_t num) {
-
-    if (qspi_mode == INDIRECT) {
-
-        qspi_comd_handler.Instruction       = cmd;
-        qspi_comd_handler.Address           = adr;                           /* 地址 */
-        qspi_comd_handler.AddressMode       = QSPI_ADDRESS_4_LINES;          /* 地址模式 */
-        qspi_comd_handler.NbData            = num;                           /* 数据长度 */
-        qspi_comd_handler.DataMode          = QSPI_DATA_4_LINES;             /* 数据模式 */
-        qspi_comd_handler.DummyCycles       = 4;                             /* 空指令周期 */
-        qspi_comd_handler.AlternateByteMode = QSPI_ALTERNATE_BYTES_4_LINES;  /* 交替字节模式 */
-        HAL_QSPI_Command(&qspi_init_handler, &qspi_comd_handler, QSPI_TIM_OUT);
-        HAL_QSPI_Receive(&qspi_init_handler, dat, QSPI_TIM_OUT);
-        qspi_comd_handler.DummyCycles       = 0;
-        qspi_comd_handler.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
-
-    } else memcpy(dat, (const void *)(QSPI_BASE + adr), num);
-}
-
 void spi_write_data(uint8_t cmd, uint32_t adr, uint8_t *dat, uint32_t num) {
 
     qspi_comd_handler.Instruction = cmd;
