@@ -1,6 +1,7 @@
 #include "qspi.h"
 
 QSPI_Mode                qspi_mode;
+MDMA_HandleTypeDef       qspi_mdma_handler;
 QSPI_HandleTypeDef       qspi_init_handler;
 QSPI_CommandTypeDef      qspi_comd_handler;
 QSPI_MemoryMappedTypeDef qspi_mema_handler;
@@ -75,24 +76,43 @@ void spi_write_data(uint8_t cmd, uint32_t adr, uint8_t *dat, uint32_t num) {
     qspi_comd_handler.NbData      = num;                  /* 数据长度 */
     qspi_comd_handler.DataMode    = QSPI_DATA_4_LINES;    /* 数据模式 */
     HAL_QSPI_Command(&qspi_init_handler, &qspi_comd_handler, QSPI_TIM_OUT);
-    HAL_QSPI_Transmit(&qspi_init_handler, dat, QSPI_TIM_OUT);
+    HAL_QSPI_Transmit_DMA(&qspi_init_handler, dat);
 }
 
 void spi_indirect(void) {
 
-    qspi_mode                           = INDIRECT;
-    qspi_comd_handler.DummyCycles       = 0;
-    qspi_comd_handler.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
+    qspi_mode                                   = INDIRECT;
+    qspi_comd_handler.DummyCycles               = 0;
+    qspi_comd_handler.AlternateByteMode         = QSPI_ALTERNATE_BYTES_NONE;
+
+    qspi_mdma_handler.Init.Request              = MDMA_REQUEST_QUADSPI_FIFO_TH;
+    qspi_mdma_handler.Init.DestinationInc       = MDMA_DEST_INC_DISABLE;
+    qspi_mdma_handler.Init.DestBurst            = MDMA_SOURCE_BURST_SINGLE;
+    qspi_mdma_handler.Init.TransferTriggerMode  = MDMA_BUFFER_TRANSFER;
+    qspi_mdma_handler.Init.BufferTransferLength = 32;
+
+    HAL_MDMA_Init(&qspi_mdma_handler);
     HAL_QSPI_Abort(&qspi_init_handler);
 }
 
 void spi_memory_map(uint8_t cmd) {
-    
-    qspi_mode                           = MEMORYMAP;
-    qspi_comd_handler.Instruction       = cmd;
-    qspi_comd_handler.AddressMode       = QSPI_ADDRESS_4_LINES;          /* 地址模式 */  
-    qspi_comd_handler.DataMode          = QSPI_DATA_4_LINES;             /* 数据模式 */
-    qspi_comd_handler.DummyCycles       = 4;                             /* 空指令周期 */
-    qspi_comd_handler.AlternateByteMode = QSPI_ALTERNATE_BYTES_4_LINES;  /* 交替字节模式 */
+
+    qspi_mode                                   = MEMORYMAP;
+    qspi_comd_handler.Instruction               = cmd;
+    qspi_comd_handler.AddressMode               = QSPI_ADDRESS_4_LINES;          /* 地址模式 */  
+    qspi_comd_handler.DataMode                  = QSPI_DATA_4_LINES;             /* 数据模式 */
+    qspi_comd_handler.DummyCycles               = 4;                             /* 空指令周期 */
+    qspi_comd_handler.AlternateByteMode         = QSPI_ALTERNATE_BYTES_4_LINES;  /* 交替字节模式 */
+
+    qspi_mema_handler.TimeOutPeriod             = 
+    qspi_mema_handler.TimeOutActivation         = 
+
+    qspi_mdma_handler.Init.Request              = MDMA_REQUEST_SW;
+    qspi_mdma_handler.Init.DestinationInc       = MDMA_DEST_INC_BYTE;
+    qspi_mdma_handler.Init.DestBurst            = MDMA_DEST_BURST_4BEATS;
+    qspi_mdma_handler.Init.TransferTriggerMode  = MDMA_REPEAT_BLOCK_TRANSFER;
+    qspi_mdma_handler.Init.BufferTransferLength = 128;
+
+    HAL_MDMA_Init(&qspi_mdma_handler);
     HAL_QSPI_MemoryMapped(&qspi_init_handler, &qspi_comd_handler, &qspi_mema_handler);
 }

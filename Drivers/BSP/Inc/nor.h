@@ -26,8 +26,8 @@
 /* 初始化NOR FLASH */
 void nor_init(void);
 
-/* 写NOR FLASH */
-void nor_write(uint32_t adr, uint8_t *dat, uint32_t num);
+/* 读NOR FLASH */
+void nor_read(uint32_t adr, uint8_t *dat, uint32_t num);
 
 /* 页写NOR FLASH */
 void nor_page_write(uint32_t adr, uint8_t *dat, uint32_t num);

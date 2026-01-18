@@ -14,10 +14,13 @@
 #define QSPI_NCS_PIN                GPIO_PIN_6
 #define QSPI_AF_X                   GPIO_AF9_QUADSPI
 #define QSPI_AF_Y                   GPIO_AF10_QUADSPI
+#define QSPI_MDMA_CHANNEL           MDMA_Channel0
 #define QSPI_CLK_ENABLE()           do {__HAL_RCC_QSPI_CLK_ENABLE();}  while (0)
+#define QSPI_MDMA_ENABLE()          do {__HAL_RCC_MDMA_CLK_ENABLE();}  while (0)
 #define QSPI_IOx_CLK_ENABLE()       do {__HAL_RCC_GPIOF_CLK_ENABLE();} while (0)
 #define QSPI_CLK_NCS_CLK_ENABLE()   do {__HAL_RCC_GPIOB_CLK_ENABLE();} while (0)
 #define QSPI_TIM_OUT                1000
+#define QSPI_MDMA_BLOCK             8 * 1024
 
 /* 内存映射地址 */
 #define QSPI_BASE 0x90000000
@@ -39,6 +42,7 @@ void spi_memory_map(uint8_t cmd);                                            /* 
 
 /* 变量声明 */
 extern QSPI_Mode                qspi_mode;
+extern MDMA_HandleTypeDef       qspi_mdma_handler;
 extern QSPI_HandleTypeDef       qspi_init_handler;
 extern QSPI_CommandTypeDef      qspi_comd_handler;
 extern QSPI_MemoryMappedTypeDef qspi_mema_handler;

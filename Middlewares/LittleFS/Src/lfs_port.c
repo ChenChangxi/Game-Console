@@ -14,9 +14,9 @@ void littlefs_init(void) {
     cfg.prog_size      = LFS_PROG_SIZE;
     cfg.block_size     = LFS_BLOCK_SIZE;
     cfg.block_count    = LFS_SIZE_BYTES / LFS_BLOCK_SIZE;
-    cfg.cache_size     = 
-    cfg.lookahead_size = 
-    cfg.block_cycles   = 
+    cfg.cache_size     = 1;
+    cfg.lookahead_size = 1;
+    cfg.block_cycles   = 1;
 }
 
 static inline uint32_t lfs_nor_addr(const struct lfs_config *c,
@@ -29,8 +29,7 @@ static int lfs_nor_read(const struct lfs_config *c, lfs_block_t block,
                         lfs_off_t off, void *buffer, lfs_size_t size) {
 
     uint32_t nor_adr = lfs_nor_addr(c, block, off);
-    const uint8_t *addr = (const uint8_t *)(LFS_MEMAP_BASE + nor_adr);
-    memcpy(buffer, addr, size);
+    nor_read(nor_adr + LFS_MEMAP_BASE, (uint8_t *)buffer, (uint32_t)size);
     return 0;            
 }
 
@@ -39,7 +38,7 @@ static int lfs_nor_write(const struct lfs_config *c, lfs_block_t block,
 
     if (!unmap) {spi_indirect();unmap = 1;}
     uint32_t nor_adr = lfs_nor_addr(c, block, off);
-    nor_page_write(nor_adr, (uint8_t*)buffer, size);
+    nor_page_write(nor_adr, (uint8_t *)buffer, (uint32_t)size);
     return 0;
 }
 

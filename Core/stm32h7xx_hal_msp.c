@@ -349,6 +349,7 @@ void HAL_QSPI_MspInit(QSPI_HandleTypeDef *hqspi) {
     GPIO_InitTypeDef qspi_gpio_handler = {0};
 
     QSPI_CLK_ENABLE();
+    QSPI_MDMA_ENABLE();
     QSPI_IOx_CLK_ENABLE();
     QSPI_CLK_NCS_CLK_ENABLE();
 
@@ -368,4 +369,16 @@ void HAL_QSPI_MspInit(QSPI_HandleTypeDef *hqspi) {
 
     qspi_gpio_handler.Pin       = QSPI_IO01_PIN;
     HAL_GPIO_Init(QSPI_IOx_PORT, &qspi_gpio_handler);
+
+    qspi_mdma_handler.Instance                      = QSPI_MDMA_CHANNEL;
+    qspi_mdma_handler.Init.Priority                 = MDMA_PRIORITY_MEDIUM;
+    qspi_mdma_handler.Init.Endianness               = MDMA_LITTLE_ENDIANNESS_PRESERVE;
+    qspi_mdma_handler.Init.SourceInc                = MDMA_SRC_INC_BYTE;
+    qspi_mdma_handler.Init.SourceBurst              = MDMA_DEST_BURST_4BEATS;
+    qspi_mdma_handler.Init.SourceDataSize           = MDMA_SRC_DATASIZE_BYTE;
+    qspi_mdma_handler.Init.DestDataSize             = MDMA_DEST_DATASIZE_BYTE;
+    qspi_mdma_handler.Init.DataAlignment            = MDMA_DATAALIGN_PACKENABLE;
+    qspi_mdma_handler.Init.SourceBlockAddressOffset = 0;
+    qspi_mdma_handler.Init.DestBlockAddressOffset   = 0;
+    __HAL_LINKDMA(&qspi_init_handler, hmdma, qspi_mdma_handler);
 }
