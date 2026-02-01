@@ -47,6 +47,7 @@ void sys_stm32_clock_init(uint32_t pllm, uint32_t plln, uint32_t pllp, uint32_t 
     HAL_RCC_ClockConfig(&clk_init, FLASH_LATENCY_4);  /* 由电压和AHB频率决定 */
 
     per_init.PeriphClockSelection      = RCC_PERIPHCLK_ADC
+                                       | RCC_PERIPHCLK_RTC
                                        | RCC_PERIPHCLK_LTDC
                                        | RCC_PERIPHCLK_QSPI
                                        | RCC_PERIPHCLK_USART16
@@ -63,6 +64,7 @@ void sys_stm32_clock_init(uint32_t pllm, uint32_t plln, uint32_t pllp, uint32_t 
     per_init.PLL3.PLL3RGE              = RCC_PLL3VCIRANGE_2;
     per_init.PLL3.PLL3VCOSEL           = RCC_PLL3VCOWIDE;
     per_init.PLL3.PLL3FRACN            = 0;
+    per_init.RTCClockSelection         = RCC_RTCCLKSOURCE_LSE;               /* RTC用LSE */
     per_init.AdcClockSelection         = RCC_ADCCLKSOURCE_PLL3;              /* ADC和LTDC共用PLL3R */
     per_init.QspiClockSelection        = RCC_ADCCLKSOURCE_PLL2;              /* QSPI用PLL2R */
     per_init.Usart16ClockSelection     = RCC_USART16CLKSOURCE_D2PCLK2;       /* 16挂载在APB2总线，共用一个选择器 */

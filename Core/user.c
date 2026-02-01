@@ -70,7 +70,7 @@ int main(void) {
     rgb_draw_picture(10, 10 + 150 - 1, 10, 10 + 150 - 1, (uint32_t)Lufei15090);
     color = rgb_show_dot(389, 10);if (color == BLUE) usart_transmit("RGB_YES\r\n", strlen("RGB_YES\r\n"));
 
-    while (1) {
+    while (true) {
 
         if (adc_stat) {
 

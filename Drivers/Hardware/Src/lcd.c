@@ -111,7 +111,7 @@ void ili9806g_init(void) {
 
     /* DCS标准指令集使能 */
     LCD->CMD = 0xFF;LCD->DAT = 0xFF;LCD->DAT = 0x98;LCD->DAT = 0x06;LCD->DAT = 0x00;
-    
+
     /* 列地址窗口：(0x0000 ~ 0x01DF) */
     LCD->CMD = 0x2A;LCD->DAT = 0x00;LCD->DAT = 0x00;LCD->DAT = 0x01;LCD->DAT = 0xDF;
 

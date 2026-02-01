@@ -23,7 +23,7 @@
 #define QSPI_MDMA_BLOCK             8 * 1024
 
 /* 内存映射地址 */
-#define QSPI_BASE 0x90000000
+#define QSPI_BASE (uint32_t)(0x90000000)
 
 /* 枚举定义 */
 typedef enum {INDIRECT, MEMORYMAP} QSPI_Mode;

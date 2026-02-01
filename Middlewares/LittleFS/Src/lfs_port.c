@@ -1,5 +1,6 @@
 #include "lfs_port.h"
 
+static lfs_t lfs;
 static struct lfs_config cfg;
 static volatile uint8_t unmap;
 
@@ -14,9 +15,13 @@ void littlefs_init(void) {
     cfg.prog_size      = LFS_PROG_SIZE;
     cfg.block_size     = LFS_BLOCK_SIZE;
     cfg.block_count    = LFS_SIZE_BYTES / LFS_BLOCK_SIZE;
-    cfg.cache_size     = 1;
-    cfg.lookahead_size = 1;
-    cfg.block_cycles   = 1;
+    cfg.cache_size     = LFS_CACHE_SIZE;    /* 工作缓存 */
+    cfg.lookahead_size = LFS_LOOK_AHEAD;    /* 位图大小 */
+    cfg.block_cycles   = LFS_BLOCK_CYCS;    /* 磨损均衡 */
+    cfg.compact_thresh = LFS_COMPACT_TH;    /* 压缩回收 */
+
+    int unmount = lfs_mount(&lfs, &cfg);
+    if (unmount) {lfs_format(&lfs, &cfg);lfs_mount(&lfs, &cfg);}
 }
 
 static inline uint32_t lfs_nor_addr(const struct lfs_config *c,

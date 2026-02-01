@@ -1,8 +1,10 @@
+#include "sd.h"
 #include "led.h"
 #include "wdg.h"
 #include "lcd.h"
 #include "rgb.h"
 #include "adc.h"
+#include "rtc.h"
 #include "tpad.h"
 #include "nand.h"
 #include "qspi.h"
@@ -381,4 +383,35 @@ void HAL_QSPI_MspInit(QSPI_HandleTypeDef *hqspi) {
     qspi_mdma_handler.Init.SourceBlockAddressOffset = 0;
     qspi_mdma_handler.Init.DestBlockAddressOffset   = 0;
     __HAL_LINKDMA(&qspi_init_handler, hmdma, qspi_mdma_handler);
+}
+
+void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc) {
+
+
+}
+
+void HAL_SD_MspInit(SD_HandleTypeDef *hsd) {
+
+    if (hsd->Instance == SD) {
+
+        GPIO_InitTypeDef sd_gpio_handler = {0};
+
+        SD_CLK_ENABLE();
+        SD_IOx_CLK_ENABLE();
+        SD_CMD_CLK_ENABLE();
+        SD_CLK_CLK_ENABLE();
+
+        sd_gpio_handler.Pin       = SD_IOx_PIN;
+        sd_gpio_handler.Mode      = GPIO_MODE_AF_PP;
+        sd_gpio_handler.Alternate = SD_AF;
+        sd_gpio_handler.Pull      = GPIO_PULLUP;
+        sd_gpio_handler.Speed     = GPIO_SPEED_FREQ_HIGH;
+        HAL_GPIO_Init(SD_IOx_PORT, &sd_gpio_handler);
+
+        sd_gpio_handler.Pin       = SD_CMD_PIN;
+        HAL_GPIO_Init(SD_CMD_PORT, &sd_gpio_handler);
+
+        sd_gpio_handler.Pin       = SD_CLK_PIN;
+        HAL_GPIO_Init(SD_CLK_PORT, &sd_gpio_handler);
+    }
 }
