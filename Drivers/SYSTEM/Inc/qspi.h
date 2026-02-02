@@ -19,8 +19,8 @@
 #define QSPI_MDMA_ENABLE()          do {__HAL_RCC_MDMA_CLK_ENABLE();}  while (0)
 #define QSPI_IOx_CLK_ENABLE()       do {__HAL_RCC_GPIOF_CLK_ENABLE();} while (0)
 #define QSPI_CLK_NCS_CLK_ENABLE()   do {__HAL_RCC_GPIOB_CLK_ENABLE();} while (0)
-#define QSPI_TIM_OUT                1000
-#define QSPI_MDMA_BLOCK             8 * 1024
+#define QSPI_TIM_OUT                (1000)
+#define QSPI_MDMA_BLOCK             (8 * 1024)
 
 /* 内存映射地址 */
 #define QSPI_BASE (uint32_t)(0x90000000)

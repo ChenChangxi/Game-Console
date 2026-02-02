@@ -116,3 +116,8 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
 
     if (hadc->Instance == ADC) {adc_stat = 1;sys_cache_sram_sync((uint32_t)dat, sizeof(dat), 0);}
 }
+
+void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc) {
+
+    
+}

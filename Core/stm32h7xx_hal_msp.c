@@ -387,7 +387,13 @@ void HAL_QSPI_MspInit(QSPI_HandleTypeDef *hqspi) {
 
 void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc) {
 
+    RTC_CLK_ENABLE();
+    HAL_PWR_EnableBkUpAccess();    /* 取消备份域写保护 */
 
+    HAL_NVIC_EnableIRQ(RTC_WKUP_IRQn);
+    HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
+    HAL_NVIC_SetPriority(RTC_WKUP_IRQn, 3, 0);
+    HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 3, 0);
 }
 
 void HAL_SD_MspInit(SD_HandleTypeDef *hsd) {

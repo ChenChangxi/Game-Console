@@ -72,7 +72,7 @@ void nand_page_read(uint32_t num, uint16_t adr, uint8_t *dat, uint32_t con);
 void nand_page_write(uint32_t num, uint16_t adr, uint8_t *dat, uint32_t con);
 
 /* 块擦NAND FLASH */
-void nand_block_erase(uint16_t num);
+void nand_block_erase(uint32_t num);
 
 /* 变量声明 */
 extern NAND_HandleTypeDef         nand_init_handler;

@@ -23,15 +23,23 @@ void nand_init(void) {
 
 void nand_page_read(uint32_t num, uint16_t adr, uint8_t *dat, uint32_t con) {
 
-
+    CMD = Read;
+    ADR = (uint8_t)adr;ADR = (uint8_t)(adr>>8);
+    ADR = (uint8_t)num;ADR = (uint8_t)(num>>8);ADR = (uint8_t)(num>>16);
+    CMD = ReadPage;
 }
 
 void nand_page_write(uint32_t num, uint16_t adr, uint8_t *dat, uint32_t con) {
 
-
+    CMD = Write;
+    ADR = (uint8_t)adr;ADR = (uint8_t)(adr>>8);
+    ADR = (uint8_t)num;ADR = (uint8_t)(num>>8);ADR = (uint8_t)(num>>16);
+    CMD = WritePage;
 }
 
-void nand_block_erase(uint16_t num) {
+void nand_block_erase(uint32_t num) {
 
-    
+    num *= NAND_PAGE_NUM;CMD = Erase;
+    ADR = (uint8_t)num;ADR = (uint8_t)(num>>8);ADR = (uint8_t)(num>>16);
+    CMD = EraseBlock;delay_us(TBERS);
 }
