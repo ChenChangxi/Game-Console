@@ -1,7 +1,7 @@
 #include "delay.h"
 
-uint16_t cyc_us = 0;
-uint16_t cou_ms = 200;
+static uint16_t cyc_us = 0;
+static uint16_t cou_ms = 200;
 
 void delay_init(uint16_t sysclk) {
 

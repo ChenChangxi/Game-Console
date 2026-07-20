@@ -5,9 +5,6 @@
 
 #include "sys.h"
 
-extern uint16_t cyc_us;
-extern uint16_t cou_ms;
-
 /* 初始化系统滴答定时器 */
 void delay_init(uint16_t sysclk);
 

@@ -3,10 +3,14 @@
 #ifndef __SYS_H
 #define __SYS_H
 
+#include "task.h"
+#include "queue.h"
 #include "stdio.h"
+#include "semphr.h"
 #include "string.h"
 #include "stdlib.h"
 #include "stdbool.h"
+#include "FreeRTOS.h"
 #include "stm32h7xx.h"
 #include "stm32h7xx_hal.h"
 #include "stm32h7xx_ll_gpio.h"
