@@ -34,7 +34,7 @@ int main(void) {
     rgb_init();
     adc_init();
     // oled_init();
-    nand_init();
+    // nand_init();
     // qspi_init();
     at24c02_init();
     ap3216c_init();
